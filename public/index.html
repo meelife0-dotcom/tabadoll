@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Tabadol : échangez les livres que vous avez lus contre ceux que vous voulez. Échange de livres gratuit entre lecteurs au Maroc.">
+<title>تبادل Tabadol – échangez des livres au Maroc</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Young+Serif&family=DM+Sans:wght@400;500;700&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f1e3;--ink:#1f2a24;--muted:#5b6556;--card:#fffdf6;--line:#ddd3b8;--accent:#0f5c4d;--on-accent:#fff;--good:#0f5c4d;--bad:#9c2b2b;--gold:#c8962e;--gold-d:#8a6414;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 "DM Sans",system-ui,sans-serif}
+h1,h2,h3{font-family:"Young Serif",Georgia,serif;font-weight:400}
+button,select,input{font-family:inherit}
+.wrap{max-width:760px;margin:0 auto;padding:26px 16px 56px}
+header{border-bottom:1px solid var(--gold);margin-bottom:22px}
+.brand{display:flex;align-items:center;gap:14px}
+.mark{width:56px;height:56px;flex:none}
+header h1{margin:0;display:flex;align-items:baseline;gap:10px;line-height:1.1}
+.nm-ar{font:700 3rem/1 Amiri,"Noto Naskh Arabic",serif;color:var(--accent)}
+.nm-la{font:400 1.7rem/1 "Young Serif",Georgia,serif;color:var(--ink)}
+header p.ar{font:700 1.4rem/1.5 Amiri,"Noto Naskh Arabic",serif;color:var(--gold-d);margin:6px 0 0;max-width:none;text-align:left}
+header p{margin:8px 0 22px;color:var(--muted);max-width:34ch}
+nav,.seg{display:flex;gap:4px;background:var(--line);padding:4px;border-radius:8px;margin-bottom:22px;overflow-x:auto}
+.tab{flex:1;background:none;border:0;border-radius:5px;padding:9px 10px;font-size:.95rem;font-weight:700;color:var(--muted);cursor:pointer;white-space:nowrap}
+.tab[aria-selected="true"]{background:var(--card);color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.18)}
+.badge{background:var(--gold);color:#14161f;border-radius:99px;padding:0 7px;font-size:.78rem;margin-left:6px}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:22px 16px}
+@media(min-width:560px){.grid{grid-template-columns:repeat(3,1fr)}}
+.book{display:flex;flex-direction:column}
+.cover{aspect-ratio:3/4;display:grid;grid-template-rows:1fr 2.2fr 1fr;border-radius:3px 7px 7px 3px;overflow:hidden;box-shadow:inset 7px 0 0 rgba(0,0,0,.2),0 6px 14px -8px rgba(0,0,0,.45)}
+.cover i{background:var(--b);color:var(--t);font:600 .72rem/1.2 "DM Sans",system-ui,sans-serif;font-style:normal;padding:7px 10px 7px 16px;display:flex;align-items:flex-end}
+.cover .mid{background:#fbf6e6;color:#14161f;display:grid;place-items:center;text-align:center;padding:8px 10px 8px 16px}
+.cover b{font:400 1.08rem/1.15 "Young Serif",Georgia,serif}
+.info{padding:10px 2px 0;font-size:.9rem;display:flex;flex-direction:column;gap:2px;flex:1}
+.info>span:first-child{font-weight:700}
+.info small{color:var(--muted);font-size:.85rem}
+.btn{background:var(--accent);color:var(--on-accent);border:0;border-radius:6px;padding:10px 12px;font-weight:700;font-size:.92rem;cursor:pointer;margin-top:auto}
+.info .btn{margin-top:8px}
+.btn.alt{background:transparent;color:var(--ink);box-shadow:inset 0 0 0 1.5px var(--line)}
+.row{background:var(--card);border-left:4px solid var(--line);border-radius:4px 8px 8px 4px;padding:14px 16px;margin-bottom:10px}
+.row.match{border-left-color:var(--gold)}
+.row p{margin:0 0 10px}
+.acts{display:flex;gap:8px}
+.status{font-weight:700;font-size:.88rem}
+.ok{color:var(--good)}.no{color:var(--bad)}.wait{color:var(--muted)}
+h2{font-size:1.25rem;margin:26px 0 10px}
+form.add{display:grid;gap:12px;grid-template-columns:1fr 1fr;background:var(--card);border-radius:8px;padding:16px;margin-bottom:20px}
+form.add .full{grid-column:1/-1}
+label{font-size:.88rem;font-weight:700;display:grid;gap:4px}
+input,select{font-size:1rem;padding:10px;border:1.5px solid var(--line);border-radius:6px;background:var(--bg);color:var(--ink);width:100%}
+.empty{color:var(--muted);padding:16px 0}
+.chip{display:inline-flex;align-items:center;gap:6px;background:var(--card);border-radius:99px;padding:4px 6px 4px 14px;margin:0 6px 6px 0;font-size:.95rem}
+.chip button{border:0;background:var(--bg);color:var(--ink);border-radius:50%;width:24px;height:24px;cursor:pointer;font-size:1rem;line-height:1}
+.flag{background:var(--gold);color:#14161f;border-radius:4px;padding:2px 8px;font-weight:700;font-size:.78rem;align-self:flex-start;margin-top:4px}
+dialog{border:0;border-radius:10px;background:var(--card);color:var(--ink);width:min(92vw,440px);padding:20px;box-shadow:0 20px 50px -10px rgba(0,0,0,.5)}
+dialog::backdrop{background:rgba(24,30,24,.55)}
+.pick{display:flex;gap:10px;align-items:center;border:1.5px solid var(--line);border-radius:6px;padding:9px 10px;margin-bottom:6px;font-weight:400;cursor:pointer}
+.pick input{width:auto}
+.hint{background:var(--bg);border-left:3px solid var(--gold);border-radius:4px;padding:10px 12px;font-size:.92rem;margin:12px 0}
+#toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:99px;font-weight:700;font-size:.92rem;opacity:0;pointer-events:none;transition:opacity .2s}
+#toast.show{opacity:1}
+@media(prefers-reduced-motion:reduce){#toast{transition:none}}
+.filters{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+#q{grid-column:1/-1}
+.sub{color:var(--muted);font-size:.88rem;margin:0 0 18px}
+.cityl{display:flex;align-items:center;gap:8px;margin:0 0 20px;font-weight:700}
+.cityl select{width:auto}
+.cover.ph{display:block}
+.cover.ph img{width:100%;height:100%;object-fit:cover;display:block}
+.flag.alt{background:var(--line);color:var(--ink)}
+.about{background:var(--card);border-radius:8px;padding:20px}
+.about p{margin:0 0 12px}
+.about ol,.about ul{padding-left:22px;margin:0 0 12px}
+.about li{margin-bottom:8px}
+.about .ar2{font:700 1.4rem/1.5 Amiri,"Noto Naskh Arabic",serif;color:var(--gold-d);margin:16px 0}
+.av{width:28px;height:28px;border-radius:50%;object-fit:cover;background:var(--line);flex:none}
+.userbar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:20px}
+.userbar .cityl{margin:0}
+#who{margin-left:auto;display:flex;align-items:center;gap:8px;font-weight:700}
+#who button{background:none;border:0;color:var(--accent);font-weight:700;cursor:pointer;text-decoration:underline;padding:4px}
+.anon nav,.anon .userbar{display:none}
+.authbox{margin-bottom:18px}
+.authbox .seg{margin-bottom:16px}
+.err{color:var(--bad);font-weight:700;margin:0;min-height:1.2em}
+.owner{display:flex;align-items:center;gap:8px;font-weight:700}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div class="brand">
+    <svg class="mark" viewBox="0 0 48 48" role="img" aria-label="Logo Tabadol"><rect width="48" height="48" rx="11" fill="#0f5c4d"/><rect x="11" y="17" width="9" height="14" rx="1.5" fill="#fbf6e6"/><rect x="28" y="17" width="9" height="14" rx="1.5" fill="#c8962e"/><g fill="none" stroke="#fbf6e6" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M13 10.5h22M31 7l4 3.5-4 3.5"/><path d="M35 37.5H13M17 34l-4 3.5 4 3.5"/></g></svg>
+    <div>
+      <h1><span class="nm-ar" lang="ar" dir="rtl">تبادل</span><span class="nm-la">Tabadol</span></h1>
+      <p class="ar" lang="ar" dir="rtl">تبادل الكتب، تبادل المعرفة والعلم</p>
+    </div>
+  </div>
+  <p>Échangez les livres que vous avez finis contre ceux que vous voulez lire ensuite, partout au Maroc.</p>
+  <div class="userbar"><label class="cityl">Ma ville <select id="mycity"></select></label><span id="who"></span></div>
+</header>
+<nav role="tablist" id="tabs">
+  <button class="tab" role="tab" data-v="browse" aria-selected="true">Parcourir</button>
+  <button class="tab" role="tab" data-v="matches" aria-selected="false">Correspondances<span class="badge" id="mbadge" hidden></span></button>
+  <button class="tab" role="tab" data-v="shelf" aria-selected="false">Mon étagère</button>
+  <button class="tab" role="tab" data-v="reqs" aria-selected="false">Demandes<span class="badge" id="badge" hidden></span></button>
+  <button class="tab" role="tab" data-v="about" aria-selected="false">À propos</button>
+</nav>
+<main id="view"></main>
+</div>
+
+<dialog id="dlg">
+  <h3 id="dtitle" style="margin:0 0 10px"></h3>
+  <p style="margin:0 0 8px">Choisissez un de vos livres à proposer :</p>
+  <div id="picks"></div>
+  <label>Ajouter de l'argent (facultatif)
+    <input type="number" id="money" min="0" step="5" value="0">
+  </label>
+  <div class="hint" id="hint"></div>
+  <div class="acts">
+    <button class="btn" id="send">Envoyer la demande d'échange</button>
+    <button class="btn alt" id="cancel" style="margin-top:auto">Annuler</button>
+  </div>
+</dialog>
+<div id="toast" role="status"></div>
+
+<script>
+const COLORS=[["#0f5c4d","#fff"],["#7a1f2b","#fff"],["#c8962e","#1f2a24"],["#5b6b2e","#fff"],["#5e2a5a","#fff"],["#1b5e6b","#fff"]];
+let me=null,myWishes=[],avatars={},authMode="login";
+const CITIES={"Casablanca":[33.57,-7.59],"Rabat":[34.02,-6.84],"Kénitra":[34.26,-6.58],"Marrakech":[31.63,-8.01],"Fès":[34.03,-5.0],"Meknès":[33.89,-5.55],"Tanger":[35.76,-5.8],"Tétouan":[35.57,-5.37],"Agadir":[30.43,-9.6],"El Jadida":[33.23,-8.5],"Oujda":[34.68,-1.91]};
+let city={};
+const CATS=["Roman","Science-fiction","Fantasy","Histoire","Biographie","Développement personnel","Jeunesse","Études"];
+const CONDS=["Comme neuf","Bon état","Usé"];
+const ABOUT=`<article class="about">
+<h2 style="margin-top:0">L'idée de Tabadol</h2>
+<p><strong>Tabadol (تبادل) est un site gratuit où les lecteurs au Maroc échangent leurs livres</strong> au lieu d'en acheter de nouveaux.</p>
+<p>Chacun a des livres déjà lus et en veut de nouveaux. Les livres coûtent cher : Tabadol met en relation des personnes qui ont chacune ce que l'autre cherche, pour que le livre terminé devienne le prochain à lire.</p>
+<h2>Comment ça marche</h2>
+<ol>
+<li><strong>Publiez vos livres</strong> avec une photo, une catégorie, l'état et une valeur estimée.</li>
+<li><strong>Ajoutez à votre liste d'envies</strong> les livres que vous cherchez.</li>
+<li><strong>Cherchez et filtrez</strong> par titre, auteur, catégorie ou état. Les livres que vous voulez, et ceux près de chez vous, apparaissent en premier.</li>
+<li><strong>Trouvez une correspondance :</strong> Tabadol repère automatiquement quand vous possédez un livre que quelqu'un veut et que cette personne possède un livre que vous voulez.</li>
+<li><strong>Proposez l'échange.</strong> Le propriétaire accepte ou refuse. Si les livres n'ont pas la même valeur, vous pouvez ajouter de l'argent pour équilibrer.</li>
+</ol>
+<h2>Pourquoi Tabadol</h2>
+<ul>
+<li>Il trouve pour vous la personne qui a le livre que vous cherchez.</li>
+<li>Il privilégie votre ville, pour échanger en main propre ou expédier à moindre coût.</li>
+<li>Il garde les échanges équitables grâce à la valeur estimée de chaque livre.</li>
+<li>Il est pensé pour le Maroc : en français (arabe bientôt), avec les villes marocaines et les prix en dirhams.</li>
+</ul>
+<p class="ar2" lang="ar" dir="rtl">تبادل الكتب، تبادل المعرفة والعلم</p>
+<button class="btn" data-go="browse">Découvrir les livres</button>
+</article>`;
+const F={q:"",cat:"",cond:""};
+const km=(a,b)=>{const[p,q]=CITIES[a],[r,t]=CITIES[b],R=Math.PI/180,x=Math.sin((r-p)*R/2)**2+Math.cos(p*R)*Math.cos(r*R)*Math.sin((t-q)*R/2)**2;return 12742*Math.asin(Math.sqrt(x))};
+const dist=u=>km(city[me],city[u]);
+const distLbl=u=>{const d=dist(u);return d<1?"même ville":`à ${Math.round(d)} km`};
+function shrink(file,cb,w){const r=new FileReader();r.onload=()=>{const im=new Image();im.onload=()=>{const k=Math.min(1,(w||420)/im.width),c=document.createElement("canvas");c.width=im.width*k;c.height=im.height*k;c.getContext("2d").drawImage(im,0,0,c.width,c.height);cb(c.toDataURL("image/jpeg",.8))};im.onerror=()=>cb("");im.src=r.result};r.readAsDataURL(file)}
+function drawRes(){
+ const M=matches(),qn=norm(F.q);
+ const o=books.filter(b=>b.owner!==me&&(!F.cat||b.cat===F.cat)&&(!F.cond||b.cond===F.cond)&&(!qn||norm(b.title+" "+b.author).includes(qn)));
+ const sc=b=>(M.some(x=>x.theirs.id===b.id)?4:has(me,b)?2:0)+(dist(b.owner)<=120?1:0);
+ o.sort((a,b)=>sc(b)-sc(a)||dist(a.owner)-dist(b.owner));
+ $("#res").innerHTML=o.length?`<div class="grid">${o.map(b=>card(b,(M.some(x=>x.theirs.id===b.id)?`<span class="flag">Correspondance mutuelle</span>`:has(me,b)?`<span class="flag alt">Sur votre liste d'envies</span>`:"")+`<button class="btn" data-want="${b.id}">Échanger contre celui-ci</button>`)).join("")}</div>`:`<p class="empty">Aucun livre ne correspond à votre recherche.</p>`}
+let books=[],reqs=[],wish={};
+const norm=s=>String(s).trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");
+// Flexible wishlist matching: ignores case, accents, punctuation and articles; accepts partial titles, author names and small typos
+const clean=s=>norm(s).replace(/[^a-z0-9 ]/g," ").replace(/\b(the|a|an|le|la|les|l|un|une|des|de|du)\b/g," ").replace(/\s+/g," ").trim();
+function lev(a,b){const d=[...Array(b.length+1).keys()];for(let i=1;i<=a.length;i++){let p=d[0];d[0]=i;for(let j=1;j<=b.length;j++){const t=d[j];d[j]=Math.min(d[j]+1,d[j-1]+1,p+(a[i-1]===b[j-1]?0:1));p=t}}return d[b.length]}
+function fz(t,b){const w=clean(t);if(w.length<3)return false;
+ return [clean(b.title),clean(b.author)].some(f=>f===w||f.includes(w)||(f.length>=4&&w.includes(f))||lev(f,w)<=Math.floor(Math.max(f.length,w.length)/5))}
+const has=(u,b)=>(wish[u]||[]).some(t=>fz(t,b));
+// Matching engine: I own a book they want AND they own a book I want
+function matches(){const out=[];
+ [...new Set(books.map(b=>b.owner).filter(o=>o!==me))].forEach(u=>{
+  books.filter(b=>b.owner===u&&has(me,b)).forEach(theirs=>
+   books.filter(b=>b.owner===me&&has(u,b)).forEach(my=>out.push({u,theirs,my})))});
+ out.sort((a,b)=>dist(a.u)-dist(b.u));return out}
+const seen=new Set();let ready=false;
+function pend(x){
+ if(reqs.some(r=>r.status==="pending"&&r.from===me&&r.want===x.theirs.id&&r.offer===x.my.id))return"Demande envoyée";
+ if(reqs.some(r=>r.status==="pending"&&r.from===x.u&&r.want===x.my.id&&r.offer===x.theirs.id))return"Demande déjà reçue de sa part. Voir Demandes.";
+ return""}
+function wishHtml(){
+ return myWishes.length?myWishes.map(w=>`<span class="chip">${esc(w.title)}<button data-rm="${w.id}" aria-label="Retirer ${esc(w.title)}">×</button></span>`).join(""):`<p class="empty">Aucune envie pour le moment. Ajoutez un livre que vous aimeriez recevoir.</p>`}
+let view="browse",target=null;
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const get=id=>books.find(b=>b.id===id);
+const mine=()=>books.filter(b=>b.owner===me);
+function toast(t){const e=$("#toast");e.textContent=t;e.classList.add("show");clearTimeout(toast.t);toast.t=setTimeout(()=>e.classList.remove("show"),2400)}
+function card(b,action){
+ const cv=b.hasImg?`<div class="cover ph"><img src="/api/photo/${b.id}" loading="lazy" alt="Couverture de ${esc(b.title)}"></div>`:`<div class="cover" style="--b:${COLORS[b.c%6][0]};--t:${COLORS[b.c%6][1]}"><i></i><div class="mid"><b>${esc(b.title)}</b></div><i>${esc(b.author)}</i></div>`;
+ const tt=b.hasImg?`<span>${esc(b.title)}</span>`:"";
+ const loc=b.owner===me?"":`<small>${esc(city[b.owner])} · ${distLbl(b.owner)}</small>`;
+ return `<article class="book">${cv}<div class="info">${tt}<span class="owner">${avatars[b.owner]?`<img class="av" src="/api/avatar/${encodeURIComponent(b.owner)}" alt="">`:""}${b.owner===me?"Vous":esc(b.owner)}</span><small>${esc(b.cat)} · ${esc(b.cond)} · valeur d'environ ${b.value} DH</small>${loc}${action||""}</div></article>`}
+async function api(path,method="GET",body){
+ try{const r=await fetch(path,{method,headers:{"content-type":"application/json","x-requested-with":"tabadol"},body:body?JSON.stringify(body):undefined});return await r.json()}
+ catch(e){return{error:"Connexion impossible. Réessayez."}}}
+async function boot(){
+ const r=await api("/api/state");
+ if(r.error||!r.me){me=null;render();return}
+ me=r.me.name;
+ books=r.books.map(b=>({...b,hasImg:!!b.hasImg,c:b.id%6}));
+ reqs=r.requests.filter(x=>books.some(b=>b.id===x.want)&&books.some(b=>b.id===x.offer)).map(x=>({id:x.id,from:x.fromName,to:x.toName,want:x.want,offer:x.offer,money:x.money,status:x.status}));
+ wish={};city={};avatars={};myWishes=[];
+ r.users.forEach(u=>{city[u.name]=u.city;avatars[u.name]=!!u.av});
+ r.wishes.forEach(w=>{(wish[w.user]=wish[w.user]||[]).push(w.title);if(w.user===me)myWishes.push(w)});
+ render()}
+async function act(id,what,msg){const r=await api(`/api/requests/${id}/${what}`,"POST");toast(r.error||msg);await boot()}
+function renderAuth(mode){
+ authMode=mode||authMode;const su=authMode==="signup";
+ $("#view").innerHTML=`<div class="about authbox"><div class="seg"><button class="tab" data-am="login" aria-selected="${!su}">Connexion</button><button class="tab" data-am="signup" aria-selected="${su}">Inscription</button></div>
+ <form id="af" class="add" style="grid-template-columns:1fr">
+ ${su?`<label>Nom d'utilisateur<input name="name" required minlength="2" maxlength="30" autocomplete="username"></label>`:""}
+ <label>E-mail<input name="email" type="email" required autocomplete="email"></label>
+ <label>Mot de passe${su?" (8 caractères minimum)":""}<input name="password" type="password" required minlength="8" autocomplete="${su?"new-password":"current-password"}"></label>
+ ${su?`<label>Ville<select name="city">${Object.keys(CITIES).map(c=>`<option>${c}</option>`).join("")}</select></label>
+ <label>Téléphone (facultatif)<input name="phone" type="tel" autocomplete="tel"></label>
+ <label>Photo de profil ou logo (facultatif)<input name="avatar" type="file" accept="image/*"></label>`:""}
+ <p class="err" id="aerr" role="alert"></p>
+ <button class="btn" type="submit">${su?"Créer mon compte":"Se connecter"}</button></form></div>`+ABOUT.replace(/<button[\s\S]*?<\/button>/,"");
+ $("#af").onsubmit=e=>{e.preventDefault();const f=new FormData(e.target),body=Object.fromEntries([...f].filter(([k])=>k!=="avatar"));
+  const go=async avatar=>{const r=await api(su?"/api/signup":"/api/login","POST",{...body,avatar});if(r.error){$("#aerr").textContent=r.error;return}await boot()};
+  const file=f.get("avatar");file&&file.size?shrink(file,go,200):go("")}}
+function render(){
+ document.body.classList.toggle("anon",!me);
+ if(!me){renderAuth();return}
+ $("#mycity").value=city[me];
+ $("#who").innerHTML=`${avatars[me]?`<img class="av" src="/api/avatar/${encodeURIComponent(me)}" alt="">`:""}<span>${esc(me)}</span><button data-out>Se déconnecter</button>`;
+ document.querySelectorAll(".tab").forEach(t=>t.setAttribute("aria-selected",t.dataset.v===view));
+ const inc=reqs.filter(r=>r.to===me&&r.status==="pending").length;
+ $("#badge").hidden=!inc;$("#badge").textContent=inc;
+ const v=$("#view"),M=matches();
+ $("#mbadge").hidden=!M.length;$("#mbadge").textContent=M.length;
+ M.forEach(x=>{const k=x.theirs.id+"-"+x.my.id;if(!seen.has(k)){seen.add(k);if(ready)setTimeout(()=>toast(`Nouvelle correspondance avec ${x.u} !`),50)}});
+ ready=true;
+ if(view==="browse"){
+  v.innerHTML=`<div class="filters"><input type="search" id="q" placeholder="Rechercher un titre ou un auteur" aria-label="Rechercher un livre"><select id="fc" aria-label="Catégorie"><option value="">Toutes les catégories</option>${CATS.map(c=>`<option>${c}</option>`).join("")}</select><select id="fs" aria-label="État du livre (occasion)"><option value="">Tous les états</option>${CONDS.map(c=>`<option>${c}</option>`).join("")}</select></div><p class="sub">Les livres que vous cherchez, dont le propriétaire veut un des vôtres, dans votre ville ou à proximité, apparaissent en premier.</p><div id="res"></div>`;
+  $("#q").value=F.q;$("#fc").value=F.cat;$("#fs").value=F.cond;
+  $("#q").oninput=e=>{F.q=e.target.value;drawRes()};$("#fc").onchange=e=>{F.cat=e.target.value;drawRes()};$("#fs").onchange=e=>{F.cond=e.target.value;drawRes()};
+  drawRes();
+ }else if(view==="matches"){
+  v.innerHTML=`<p style="margin-top:0">Tabadol compare toutes les étagères et listes d'envies. Une correspondance apparaît quand vous possédez un livre que quelqu'un veut et que cette personne possède un livre que vous voulez.</p>`+
+  (M.length?M.map(x=>{const s=pend(x);return `<div class="row match"><p><strong>Correspondance avec ${esc(x.u)}</strong> <small>(${esc(city[x.u])}, ${distLbl(x.u)})</small><br>Vous donnez « ${esc(x.my.title)} » (${x.my.value} DH) et recevez « ${esc(x.theirs.title)} » (${x.theirs.value} DH).</p>${s?`<span class="status wait">${s}</span>`:`<button class="btn" data-prop="${x.theirs.id}-${x.my.id}">Proposer cet échange</button>`}</div>`}).join(""):`<p class="empty">Aucune correspondance pour l'instant. Ajoutez des livres souhaités à votre liste d'envies dans Mon étagère.</p>`);
+ }else if(view==="about"){
+  v.innerHTML=ABOUT;
+ }else if(view==="shelf"){
+  v.innerHTML=`<form class="add" id="addf"><label class="full">Titre<input name="t" required></label>
+  <label>Auteur<input name="a" required></label>
+  <label>Valeur estimée (DH)<input name="v" type="number" min="5" step="5" value="80" required></label>
+  <label>État<select name="c"><option>Comme neuf</option><option selected>Bon état</option><option>Usé</option></select></label>
+  <label>Catégorie<select name="k">${CATS.map(c=>`<option>${c}</option>`).join("")}</select></label><label class="full">Photo du livre<input name="p" type="file" accept="image/*"></label><button class="btn full" type="submit">Ajouter à mon étagère</button></form>
+  ${mine().length?`<div class="grid">${mine().map(b=>card(b)).join("")}</div>`:`<p class="empty">Votre étagère est vide. Ajoutez un livre ci-dessus pour commencer à échanger.</p>`}
+  <h2>Ma liste d'envies</h2>
+  <form class="add" id="wf" style="grid-template-columns:1fr auto"><label>Livre que vous voulez<input name="w" required></label><button class="btn" type="submit" style="align-self:end;margin-top:0">Ajouter</button></form>
+  <div>${wishHtml()}</div>`;
+  $("#wf").onsubmit=async e=>{e.preventDefault();const t=new FormData(e.target).get("w").trim();
+   if(t&&!myWishes.some(x=>norm(x.title)===norm(t))){const r=await api("/api/wishes","POST",{title:t});if(r.error)toast(r.error);await boot()}};
+  $("#addf").onsubmit=e=>{e.preventDefault();const f=new FormData(e.target),file=f.get("p"),
+   add=async img=>{const r=await api("/api/books","POST",{title:f.get("t"),author:f.get("a"),cond:f.get("c"),cat:f.get("k"),value:+f.get("v"),img});if(r.error){toast(r.error);return}toast("Livre ajouté");await boot()};
+   file&&file.size?shrink(file,add):add("")};
+ }else{
+  const line=r=>{const w=get(r.want),o=get(r.offer);
+   const m=r.money?` + ${r.money} DH`:"";
+   return `<strong>${r.from===me?"Vous proposez":esc(r.from)+" propose"}</strong> « ${esc(o.title)} »${m} contre « ${esc(w.title)} »`};
+  const inc=reqs.filter(r=>r.to===me&&r.status==="pending");
+  const sent=reqs.filter(r=>r.from===me&&r.status==="pending");
+  const done=reqs.filter(r=>r.status!=="pending");
+  v.innerHTML=`<h2 style="margin-top:0">En attente de votre réponse</h2>`+
+   (inc.length?inc.map(r=>`<div class="row"><p>${line(r)}</p><div class="acts"><button class="btn" data-acc="${r.id}">Accepter</button><button class="btn alt" data-dec="${r.id}" style="margin-top:auto">Refuser</button></div></div>`).join(""):`<p class="empty">Aucune demande pour le moment.</p>`)+
+   `<h2>Envoyées par vous</h2>`+(sent.length?sent.map(r=>`<div class="row"><p>${line(r)}</p><span class="status wait">En attente de ${esc(r.to)}</span> <button class="btn alt" data-can="${r.id}" style="margin-left:8px">Annuler</button></div>`).join(""):`<p class="empty">Rien d'envoyé pour l'instant. Trouvez un livre dans Parcourir.</p>`)+
+   (done.length?`<h2>Terminées</h2>`+done.map(r=>`<div class="row"><p>${line(r)}</p><span class="status ${r.status==="accepted"?"ok":"no"}">${{accepted:"Échangé",declined:"Refusé",cancelled:"Annulée"}[r.status]}</span></div>`).join(""):"");
+ }
+}
+function hint(){
+ const w=get(target),o=get(+(document.querySelector("input[name=pick]:checked")||{}).value);
+ const h=$("#hint");
+ if(!o){h.textContent="Choisissez un livre pour comparer les valeurs.";return}
+ const d=w.value-o.value;
+ h.textContent=d>0?`« ${w.title} » vaut environ ${d} DH de plus que le vôtre. Ajouter ${d} DH rééquilibrerait l'échange.`:d<0?`Votre livre vaut environ ${-d} DH de plus. Le propriétaire peut ajouter de l'argent, ou vous pouvez échanger tel quel.`:"Les deux livres ont à peu près la même valeur. Un échange direct convient.";
+}
+function openSwap(id,pre){target=id;const m=mine();
+ if(!m.length){toast("Ajoutez d'abord un livre à votre étagère");view="shelf";render();return}
+ $("#dtitle").textContent=`Échanger contre « ${get(target).title} »`;
+ const sel=m.some(b=>b.id===pre)?pre:m[0].id;
+ $("#picks").innerHTML=m.map(b=>`<label class="pick"><input type="radio" name="pick" value="${b.id}" ${b.id===sel?"checked":""}>${esc(b.title)} <small>(${b.value} DH)</small></label>`).join("");
+ $("#money").value=0;hint();$("#dlg").showModal()}
+$("#tabs").onclick=e=>{const t=e.target.closest(".tab");if(t){view=t.dataset.v;render()}};
+$("#view").onclick=e=>{
+ const q=a=>e.target.closest(`[data-${a}]`);
+ if(q("want")){
+  openSwap(+q("want").dataset.want);
+ }
+ if(q("prop")){const [a,b]=q("prop").dataset.prop.split("-");openSwap(+a,+b)}
+ if(q("rm")){api("/api/wishes/"+q("rm").dataset.rm,"DELETE").then(boot)}
+ if(q("go")){view=q("go").dataset.go;render()}
+ const acc=q("acc"),dec=q("dec");
+ if(acc)act(acc.dataset.acc,"accept","Échange conclu !");
+ if(dec)act(dec.dataset.dec,"decline","Demande refusée");
+ if(q("can"))act(q("can").dataset.can,"cancel","Demande annulée");
+ if(q("am"))renderAuth(q("am").dataset.am);
+};
+$("#picks").onchange=hint;
+$("#cancel").onclick=()=>$("#dlg").close();
+$("#send").onclick=async()=>{
+ const o=document.querySelector("input[name=pick]:checked");if(!o)return;
+ const r=await api("/api/requests","POST",{want:target,offer:+o.value,money:Math.max(0,+$("#money").value||0)});
+ $("#dlg").close();if(r.error){toast(r.error);return}
+ toast(`Demande envoyée à ${get(target).owner}`);view="reqs";await boot();
+};
+$("#mycity").innerHTML=Object.keys(CITIES).map(c=>`<option>${c}</option>`).join("");
+$("#mycity").onchange=async e=>{await api("/api/me","PATCH",{city:e.target.value});await boot()};
+$("#who").onclick=async e=>{if(e.target.closest("[data-out]")){await api("/api/logout","POST");me=null;await boot()}};
+boot();
+</script>
+</body>
+</html>

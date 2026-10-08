@@ -1,0 +1,8 @@
+name = "tabadol"
+pages_build_output_dir = "./public"
+compatibility_date = "2025-09-01"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "tabadol"
+database_id = "PASTE-YOUR-D1-DATABASE-ID-HERE"
