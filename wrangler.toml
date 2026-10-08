@@ -5,4 +5,4 @@ compatibility_date = "2025-09-01"
 [[d1_databases]]
 binding = "DB"
 database_name = "tabadol"
-database_id = "PASTE-YOUR-D1-DATABASE-ID-HERE"
+database_id = "a8eb586b-2d52-401e-9a46-fd4a8df7570d"
