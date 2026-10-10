@@ -14,7 +14,7 @@ html{scroll-padding-top:env(safe-area-inset-top,0px)}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 "DM Sans",system-ui,sans-serif}
 h1,h2,h3{font-family:"Young Serif",Georgia,serif;font-weight:400}
-button,select,input{font-family:inherit}
+button,select,input,textarea{font-family:inherit}
 .wrap{max-width:760px;margin:0 auto;padding:26px 16px 56px}
 header{border-bottom:1px solid var(--gold);margin-bottom:22px}
 .brand{display:flex;align-items:center;gap:14px}
@@ -52,7 +52,7 @@ h2{font-size:1.25rem;margin:26px 0 10px}
 form.add{display:grid;gap:12px;grid-template-columns:1fr 1fr;background:var(--card);border-radius:8px;padding:16px;margin-bottom:20px}
 form.add .full{grid-column:1/-1}
 label{font-size:.88rem;font-weight:700;display:grid;gap:4px}
-input,select{font-size:1rem;padding:10px;border:1.5px solid var(--line);border-radius:6px;background:var(--bg);color:var(--ink);width:100%}
+input,select,textarea{font-size:1rem;padding:10px;border:1.5px solid var(--line);border-radius:6px;background:var(--bg);color:var(--ink);width:100%}
 .empty{color:var(--muted);padding:16px 0}
 .chip{display:inline-flex;align-items:center;gap:6px;background:var(--card);border-radius:99px;padding:4px 6px 4px 14px;margin:0 6px 6px 0;font-size:.95rem}
 .chip button{border:0;background:var(--bg);color:var(--ink);border-radius:50%;width:24px;height:24px;cursor:pointer;font-size:1rem;line-height:1}
@@ -88,6 +88,26 @@ dialog::backdrop{background:rgba(24,30,24,.55)}
 .authbox .seg{margin-bottom:16px}
 .err{color:var(--bad);font-weight:700;margin:0;min-height:1.2em}
 .owner{display:flex;align-items:center;gap:8px;font-weight:700}
+.row.ok{border-left-color:var(--good)}
+.btn.bad{background:var(--bad);color:#fff}
+#cmsgs{height:240px;overflow:auto;background:var(--bg);border-radius:6px;padding:10px;display:flex;flex-direction:column;gap:6px;margin-bottom:10px}
+.msg{max-width:82%;padding:7px 10px;border-radius:10px;background:var(--card);border:1px solid var(--line);align-self:flex-start;overflow-wrap:anywhere}
+.msg.me{align-self:flex-end;background:var(--accent);color:var(--on-accent);border-color:transparent}
+.msg.meet{border:2px solid var(--gold)}
+.cform{display:flex;gap:8px}.cform .btn{margin-top:0}
+#stars button{background:none;border:0;font-size:2.4rem;line-height:1;cursor:pointer;color:var(--line);padding:0 3px}
+#stars button.on{color:var(--gold)}
+.rtag{display:inline-flex;gap:6px;align-items:center;margin-right:12px;font-weight:400}.rtag input{width:auto}
+.cl{display:block;color:inherit;text-decoration:none}
+.bigph{width:100%;max-height:440px;object-fit:contain;background:var(--line);border-radius:6px;display:block}
+.thumbs{display:flex;gap:8px;margin-top:8px}
+.thumbs button{padding:0;border:2px solid var(--line);border-radius:6px;background:none;cursor:pointer;width:64px;height:64px;overflow:hidden}
+.thumbs img{width:100%;height:100%;object-fit:cover;display:block}
+.bookpage{display:grid;gap:18px}
+@media(min-width:620px){.bookpage{grid-template-columns:280px 1fr}}
+.bp-desc{white-space:pre-wrap;background:var(--card);border-radius:6px;padding:10px 12px;margin:0 0 12px}
+.linkbtn{background:none;border:0;color:var(--accent);font-weight:700;text-decoration:underline;cursor:pointer;padding:0;font-size:inherit}
+.guestbar{background:var(--card);border-left:4px solid var(--gold);border-radius:4px;padding:10px 12px;margin:0 0 14px}
 </style>
 </head>
 <body>
@@ -126,11 +146,27 @@ dialog::backdrop{background:rgba(24,30,24,.55)}
     <button class="btn alt" id="cancel" style="margin-top:auto">Annuler</button>
   </div>
 </dialog>
+<dialog id="cdlg">
+  <h3 id="ctitle" style="margin:0 0 6px"></h3>
+  <p class="sub" style="margin:0 0 10px">Retrouvez-vous dans un lieu public, de jour. Ne partagez pas votre adresse.</p>
+  <div id="cmsgs" aria-live="polite"></div>
+  <form id="cf" class="cform"><input id="cin" maxlength="500" placeholder="Votre message" autocomplete="off" required><button class="btn" type="submit">Envoyer</button></form>
+  <div class="acts" style="margin-top:10px;flex-wrap:wrap"><button class="btn alt" id="cmeet" type="button">Proposer un rendez-vous</button><button class="btn alt" id="crep" type="button">Signaler</button><button class="btn alt" id="cclose" type="button">Fermer</button></div>
+  <div id="cextra"></div>
+</dialog>
+<dialog id="rdlg">
+  <h3 id="rtitle" style="margin:0 0 10px"></h3>
+  <div id="stars" role="radiogroup" aria-label="Note"></div>
+  <div id="rtags" style="margin:10px 0"></div>
+  <label>Commentaire (facultatif)<input id="rcm" maxlength="300"></label>
+  <p class="sub" id="rhint" style="margin:10px 0"></p>
+  <div class="acts"><button class="btn" id="rsend" type="button">Envoyer la note</button><button class="btn alt" id="rcancel" type="button" style="margin-top:auto">Plus tard</button></div>
+</dialog>
 <div id="toast" role="status"></div>
 
 <script>
 const COLORS=[["#0f5c4d","#fff"],["#7a1f2b","#fff"],["#c8962e","#1f2a24"],["#5b6b2e","#fff"],["#5e2a5a","#fff"],["#1b5e6b","#fff"]];
-let me=null,myWishes=[],avatars={},authMode="login";
+let me=null,myWishes=[],avatars={},authMode="login",rat={},swp={},unreadTotal=0,chatId=null,chatLast=0,chatTimer=null,rateId=null,rateStars=0,delAsk=null,bookId=null,prevView="browse";
 const CITIES={"Casablanca":[33.57,-7.59],"Rabat":[34.02,-6.84],"Kénitra":[34.26,-6.58],"Marrakech":[31.63,-8.01],"Fès":[34.03,-5.0],"Meknès":[33.89,-5.55],"Tanger":[35.76,-5.8],"Tétouan":[35.57,-5.37],"Agadir":[30.43,-9.6],"El Jadida":[33.23,-8.5],"Oujda":[34.68,-1.91]};
 let city={};
 const CATS=["Roman","Science-fiction","Fantasy","Histoire","Biographie","Développement personnel","Jeunesse","Études"];
@@ -177,11 +213,8 @@ function fz(t,b){const w=clean(t);if(w.length<3)return false;
  return [clean(b.title),clean(b.author)].some(f=>f===w||f.includes(w)||(f.length>=4&&w.includes(f))||lev(f,w)<=Math.floor(Math.max(f.length,w.length)/5))}
 const has=(u,b)=>(wish[u]||[]).some(t=>fz(t,b));
 // Matching engine: I own a book they want AND they own a book I want
-function matches(){const out=[];
- [...new Set(books.map(b=>b.owner).filter(o=>o!==me))].forEach(u=>{
-  books.filter(b=>b.owner===u&&has(me,b)).forEach(theirs=>
-   books.filter(b=>b.owner===me&&has(u,b)).forEach(my=>out.push({u,theirs,my})))});
- out.sort((a,b)=>dist(a.u)-dist(b.u));return out}
+let srvMatches=[];
+function matches(){return srvMatches.map(m=>({u:m.user,theirs:get(m.theirs),my:get(m.mine)})).filter(x=>x.theirs&&x.my).sort((a,b)=>dist(a.u)-dist(b.u))}
 const seen=new Set();let ready=false;
 function pend(x){
  if(reqs.some(r=>r.status==="pending"&&r.from===me&&r.want===x.theirs.id&&r.offer===x.my.id))return"Demande envoyée";
@@ -198,25 +231,133 @@ function toast(t){const e=$("#toast");e.textContent=t;e.classList.add("show");cl
 function card(b,action){
  const cv=b.hasImg?`<div class="cover ph"><img src="/api/photo/${b.id}" loading="lazy" alt="Couverture de ${esc(b.title)}"></div>`:`<div class="cover" style="--b:${COLORS[b.c%6][0]};--t:${COLORS[b.c%6][1]}"><i></i><div class="mid"><b>${esc(b.title)}</b></div><i>${esc(b.author)}</i></div>`;
  const tt=b.hasImg?`<span>${esc(b.title)}</span>`:"";
- const loc=b.owner===me?"":`<small>${esc(city[b.owner])} · ${distLbl(b.owner)}</small>`;
- return `<article class="book">${cv}<div class="info">${tt}<span class="owner">${avatars[b.owner]?`<img class="av" src="/api/avatar/${encodeURIComponent(b.owner)}" alt="">`:""}${b.owner===me?"Vous":esc(b.owner)}</span><small>${esc(b.cat)} · ${esc(b.cond)} · valeur d'environ ${b.value} DH</small>${loc}${action||""}</div></article>`}
+ const loc=(!me||b.owner===me)?"":`<small>${esc(city[b.owner])} · ${distLbl(b.owner)}</small>`;
+ return `<article class="book"><a class="cl" href="#/livre/${b.id}" data-open="${b.id}" aria-label="Voir l'annonce : ${esc(b.title)}">${cv}</a><div class="info">${tt}${me?`<span class="owner">${avatars[b.owner]?`<img class="av" src="/api/avatar/${encodeURIComponent(b.owner)}" alt="">`:""}${b.owner===me?"Vous":esc(b.owner)}${rt(b.owner)}</span>`:`<span class="owner">Membre à ${esc(b.gcity||"")}</span>`}<small>${esc(b.cat)} · ${esc(b.cond)} · valeur d'environ ${b.value} DH</small>${loc}${action||""}</div></article>`}
+const photoSrc=(id,n)=>"/api/photo/"+id+(n?"/"+n:"");
+const avatarSrc=n=>"/api/avatar/"+encodeURIComponent(n);
+function routeHash(){const m=/^#\/livre\/(\d+)$/.exec(location.hash);if(m&&view!=="book"){prevView=view;bookId=+m[1];view="book"}}
+function openBook(id){prevView=view==="book"?prevView:view;bookId=id;view="book";try{history.pushState(null,"","#/livre/"+id)}catch(e){}render();window.scrollTo(0,0)}
+async function shareBook(id){const b=get(id),url=location.origin+"/livre/"+id;
+ try{if(navigator.share){await navigator.share({title:b.title+" sur Tabadol",text:"Je propose ce livre à l'échange sur Tabadol",url});return}}catch(e){return}
+ try{await navigator.clipboard.writeText(url);toast("Lien copié")}catch(e){$("#bpextra").innerHTML=`<label style="margin-top:10px">Copiez le lien<input readonly value="${url}" onclick="this.select()"></label>`}}
+async function showPublic(){const m=/^#\/livre\/(\d+)$/.exec(location.hash);if(!m)return;
+ const b=await api("/api/book/"+m[1]);if(b.error)return;
+ const box=document.createElement("div");box.className="about authbox";
+ box.innerHTML=`<h2 style="margin-top:0">${esc(b.title)}</h2><p class="sub" style="margin:0 0 8px">${esc(b.author)} · ${esc(b.cat)} · ${esc(b.cond)} · valeur d'environ ${b.value} DH · membre à ${esc(b.city)}</p>${b.photos?`<img class="bigph" src="${photoSrc(b.id,0)}" alt="">`:""}${b.description?`<p class="bp-desc">${esc(b.description)}</p>`:""}<p><strong>Connectez-vous ou créez un compte gratuit pour proposer un échange.</strong></p>`;
+ $("#view").prepend(box)}
+function bookPage(id){
+ const b=get(id);
+ if(!b)return `<p class="empty">Cette annonce n'existe plus.</p><button class="btn" data-back="1">Retour</button>`;
+ const np=(b.hasImg?1:0)+(b.extra||0),mineB=b.owner===me,M=matches();
+ const cover=np?`<img id="bigph" class="bigph" src="${photoSrc(b.id,0)}" alt="Photo de ${esc(b.title)}">`:`<div class="cover" style="--b:${COLORS[b.c%6][0]};--t:${COLORS[b.c%6][1]};max-width:260px"><i></i><div class="mid"><b>${esc(b.title)}</b></div><i>${esc(b.author)}</i></div>`;
+ const thumbs=np>1?`<div class="thumbs">${Array.from({length:np},(_,i)=>`<button type="button" data-ph="${i}" aria-label="Photo ${i+1}"><img src="${photoSrc(b.id,i)}" alt=""></button>`).join("")}</div>`:"";
+ const tag=M.some(x=>x.theirs.id===b.id)?`<span class="flag">Correspondance mutuelle</span>`:(!mineB&&has(me,b)?`<span class="flag alt">Sur votre liste d'envies</span>`:"");
+ const others=books.filter(x=>x.owner===b.owner&&x.id!==b.id).slice(0,4);
+ return `<p style="margin:0 0 12px"><button class="btn alt" data-back="1" style="margin:0">← Retour</button></p>
+ <article class="bookpage"><div class="bp-media">${cover}${thumbs}</div><div class="bp-info">
+  ${tag}<h2 style="margin:6px 0 2px">${esc(b.title)}</h2>
+  <p class="sub" style="margin:0 0 10px">${esc(b.author)} · ${esc(b.cat)}</p>
+  <p style="margin:0 0 10px"><strong>${esc(b.cond)}</strong> · valeur d'environ <strong>${b.value} DH</strong></p>
+  ${b.description?`<p class="bp-desc">${esc(b.description)}</p>`:""}
+  <div class="row" style="margin:0 0 12px"><span class="owner">${avatars[b.owner]?`<img class="av" src="${avatarSrc(b.owner)}" alt="">`:""}${mineB?"Vous (c'est votre annonce)":esc(b.owner)}${rt(b.owner)}</span><br><small>${esc(city[b.owner]||"")}${mineB?"":" · "+distLbl(b.owner)}</small></div>
+  <div class="acts" style="flex-wrap:wrap">${mineB?delBtn(b):`<button class="btn" data-want="${b.id}">Échanger contre ce livre</button>`}<button class="btn alt" data-share="${b.id}">Partager</button>${mineB?"":`<button class="btn alt" data-repbook="${b.id}">Signaler</button>`}</div>
+  <div id="bpextra"></div></div></article>
+ ${others.length?`<h2>Autres livres de ${mineB?"votre étagère":esc(b.owner)}</h2><div class="grid">${others.map(x=>card(x)).join("")}</div>`:""}`}
+let gAuth=false;
+function drawGuest(){
+ const qn=norm(F.q);
+ const o=books.filter(b=>(!F.cat||b.cat===F.cat)&&(!F.cond||b.cond===F.cond)&&(!qn||norm(b.title+" "+b.author).includes(qn))).sort((a,b)=>b.id-a.id);
+ $("#res").innerHTML=o.length?`<div class="grid">${o.map(b=>card(b,`<button class="btn" data-gv="signup">Échanger</button>`)).join("")}</div>`:`<p class="empty">Aucun livre ne correspond à votre recherche.</p>`}
+function guestBook(id){
+ const b=get(id);
+ if(!b)return `<p class="empty">Cette annonce n'existe plus.</p><button class="btn" data-gv="browse">Voir les livres</button>`;
+ const np=(b.hasImg?1:0)+(b.extra||0);
+ const cover=np?`<img id="bigph" class="bigph" src="${photoSrc(b.id,0)}" alt="Photo de ${esc(b.title)}">`:`<div class="cover" style="--b:${COLORS[b.c%6][0]};--t:${COLORS[b.c%6][1]};max-width:260px"><i></i><div class="mid"><b>${esc(b.title)}</b></div><i>${esc(b.author)}</i></div>`;
+ const thumbs=np>1?`<div class="thumbs">${Array.from({length:np},(_,i)=>`<button type="button" data-ph="${i}" aria-label="Photo ${i+1}"><img src="${photoSrc(b.id,i)}" alt=""></button>`).join("")}</div>`:"";
+ return `<p style="margin:0 0 12px"><button class="btn alt" data-back="1" style="margin:0">← Retour</button></p>
+ <article class="bookpage"><div class="bp-media">${cover}${thumbs}</div><div class="bp-info">
+  <h2 style="margin:6px 0 2px">${esc(b.title)}</h2>
+  <p class="sub" style="margin:0 0 10px">${esc(b.author)} · ${esc(b.cat)}</p>
+  <p style="margin:0 0 10px"><strong>${esc(b.cond)}</strong> · valeur d'environ <strong>${b.value} DH</strong></p>
+  ${b.description?`<p class="bp-desc">${esc(b.description)}</p>`:""}
+  <div class="row" style="margin:0 0 12px"><span class="owner">Membre à ${esc(b.gcity||"")}</span></div>
+  <div class="acts" style="flex-wrap:wrap"><button class="btn" data-gv="signup">Échanger contre ce livre</button><button class="btn alt" data-share="${b.id}">Partager</button><button class="btn alt" data-gv="signup">Signaler</button></div>
+  <p class="sub" style="margin-top:12px">Inscrivez-vous gratuitement pour proposer cet échange.</p>
+  <div id="bpextra"></div></div></article>`}
+function guestRender(){
+ routeHash();
+ if(gAuth){renderAuth();return}
+ const cur=view==="book"?prevView:view;
+ const t=(v,l)=>`<button class="tab" data-gv="${v}" aria-selected="${cur===v}">${l}</button>`;
+ const nav=`<div class="seg">${t("browse","Parcourir")}${t("about","À propos")}<button class="tab" data-gv="login">Connexion</button><button class="tab" data-gv="signup" style="background:var(--accent);color:var(--on-accent)">Inscription</button></div>`;
+ const v=$("#view");
+ if(view==="about"){v.innerHTML=nav+ABOUT.replace(/<button[\s\S]*?<\/button>/,"");return}
+ if(view==="book"){v.innerHTML=nav+guestBook(bookId);return}
+ v.innerHTML=nav+`<p class="guestbar"><strong>Créez un compte gratuit</strong> pour publier vos livres et proposer des échanges. <button class="linkbtn" data-gv="signup">S'inscrire</button></p>
+ <div class="filters"><input type="search" id="q" placeholder="Rechercher un titre ou un auteur" aria-label="Rechercher un livre"><select id="fc" aria-label="Catégorie"><option value="">Toutes les catégories</option>${CATS.map(c=>`<option>${c}</option>`).join("")}</select><select id="fs" aria-label="État du livre (occasion)"><option value="">Tous les états</option>${CONDS.map(c=>`<option>${c}</option>`).join("")}</select></div><div id="res"></div>`;
+ $("#q").value=F.q;$("#fc").value=F.cat;$("#fs").value=F.cond;
+ $("#q").oninput=e=>{F.q=e.target.value;drawGuest()};$("#fc").onchange=e=>{F.cat=e.target.value;drawGuest()};$("#fs").onchange=e=>{F.cond=e.target.value;drawGuest()};
+ drawGuest()}
+const delBtn=b=>delAsk===b.id?`<button class="btn bad" data-delok="${b.id}">Oui, supprimer</button><button class="btn alt" data-delno="1">Non</button>`:`<button class="btn alt" data-del="${b.id}">Supprimer</button>`;
+const rt=n=>{const x=rat[n];return ` <small style="font-weight:400;color:var(--muted)">${x?"★ "+String(x.avg).replace(".",",")+" ("+x.n+")":"Nouveau"}</small>`};
+async function openChat(id){
+ const r=reqs.find(x=>x.id===id);if(!r)return;chatId=id;chatLast=0;
+ $("#ctitle").textContent=`« ${get(r.want).title} » contre « ${get(r.offer).title} » avec ${r.from===me?r.to:r.from}`;
+ $("#cmsgs").innerHTML="";$("#cextra").innerHTML="";$("#cdlg").showModal();
+ await pollChat();clearInterval(chatTimer);chatTimer=setInterval(pollChat,4000)}
+async function pollChat(){
+ if(!chatId)return;
+ const d=await api(`/api/requests/${chatId}/messages?after=${chatLast}`);if(d.error||!d.messages)return;
+ const box=$("#cmsgs");
+ d.messages.forEach(m=>{chatLast=Math.max(chatLast,m.id);const el=document.createElement("div");el.className="msg"+(m.mine?" me":"")+(m.kind==="meet"?" meet":"");el.textContent=m.body;box.appendChild(el)});
+ if(d.messages.length)box.scrollTop=box.scrollHeight;
+ $("#cf").style.display=d.open?"flex":"none"}
+function closeChat(){clearInterval(chatTimer);chatId=null;if($("#cdlg").open)$("#cdlg").close();boot()}
+$("#cclose").onclick=closeChat;
+$("#cdlg").addEventListener("cancel",()=>{clearInterval(chatTimer);chatId=null;setTimeout(boot,0)});
+$("#cf").onsubmit=async e=>{e.preventDefault();const t=$("#cin").value.trim();if(!t)return;$("#cin").value="";
+ const r=await api(`/api/requests/${chatId}/messages`,"POST",{body:t});if(r.error){toast(r.error);return}pollChat()};
+$("#cmeet").onclick=()=>{
+ $("#cextra").innerHTML=`<div class="add" style="grid-template-columns:1fr;margin:10px 0 0"><label>Lieu public<input id="mp" maxlength="80" placeholder="Café, bibliothèque, gare…"></label><label>Date et heure<input id="md" type="datetime-local"></label><button class="btn" id="mok" type="button">Envoyer la proposition</button></div>`;
+ $("#mok").onclick=async()=>{const p=$("#mp").value.trim(),d=$("#md").value;if(!p||!d){toast("Indiquez un lieu et une date");return}
+  const dt=new Date(d).toLocaleString("fr-FR",{weekday:"long",day:"numeric",month:"long",hour:"2-digit",minute:"2-digit"});
+  const r=await api(`/api/requests/${chatId}/messages`,"POST",{body:`Rendez-vous proposé : ${p}, le ${dt}. Répondez pour confirmer.`,kind:"meet"});
+  if(r.error)toast(r.error);$("#cextra").innerHTML="";pollChat()}};
+$("#crep").onclick=()=>{
+ $("#cextra").innerHTML=`<div class="add" style="grid-template-columns:1fr;margin:10px 0 0"><label>Que s'est-il passé ?<input id="rr" maxlength="300"></label><button class="btn" id="rok" type="button">Envoyer le signalement</button></div>`;
+ $("#rok").onclick=async()=>{const rq=reqs.find(x=>x.id===chatId),why=$("#rr").value.trim();if(why.length<3){toast("Décrivez le problème");return}
+  const r=await api("/api/report","POST",{user:rq.from===me?rq.to:rq.from,request:chatId,reason:why});toast(r.error||"Signalement envoyé. Merci.");$("#cextra").innerHTML=""}};
+function openRate(id){
+ const r=reqs.find(x=>x.id===id);rateId=id;rateStars=0;
+ $("#rtitle").textContent=`Noter ${r.from===me?r.to:r.from}`;$("#rcm").value="";
+ $("#stars").innerHTML=[1,2,3,4,5].map(i=>`<button type="button" data-s="${i}" role="radio" aria-checked="false" aria-label="${i} sur 5">★</button>`).join("");
+ $("#rtags").innerHTML=["Ponctuel","Livre conforme","Aimable"].map(t=>`<label class="rtag"><input type="checkbox" value="${t}">${t}</label>`).join("");
+ $("#rhint").textContent="Votre note sera visible quand l'autre personne aura noté aussi, ou après 7 jours.";$("#rdlg").showModal()}
+$("#stars").onclick=e=>{const b=e.target.closest("[data-s]");if(!b)return;rateStars=+b.dataset.s;
+ document.querySelectorAll("#stars button").forEach(x=>{x.classList.toggle("on",+x.dataset.s<=rateStars);x.setAttribute("aria-checked",+x.dataset.s===rateStars)})};
+$("#rcancel").onclick=()=>$("#rdlg").close();
+$("#rsend").onclick=async()=>{if(!rateStars){toast("Choisissez une note");return}
+ const tags=[...document.querySelectorAll("#rtags input:checked")].map(x=>x.value);
+ const r=await api(`/api/requests/${rateId}/rate`,"POST",{stars:rateStars,tags,comment:$("#rcm").value});
+ $("#rdlg").close();toast(r.error||"Merci pour votre note");await boot()};
 async function api(path,method="GET",body){
  try{const r=await fetch(path,{method,headers:{"content-type":"application/json","x-requested-with":"tabadol"},body:body?JSON.stringify(body):undefined});return await r.json()}
  catch(e){return{error:"Connexion impossible. Réessayez."}}}
 async function boot(){
  const r=await api("/api/state");
- if(r.error||!r.me){me=null;render();return}
- me=r.me.name;
+ if(r.error||!r.me){me=null;const g=await api("/api/public");books=(g.books||[]).map(b=>({...b,hasImg:!!b.hasImg,c:b.id%6,owner:"",gcity:b.city}));reqs=[];render();return}
+ me=r.me.name;gAuth=false;
  books=r.books.map(b=>({...b,hasImg:!!b.hasImg,c:b.id%6}));
- reqs=r.requests.filter(x=>books.some(b=>b.id===x.want)&&books.some(b=>b.id===x.offer)).map(x=>({id:x.id,from:x.fromName,to:x.toName,want:x.want,offer:x.offer,money:x.money,status:x.status}));
- wish={};city={};avatars={};myWishes=[];
+ reqs=r.requests.filter(x=>books.some(b=>b.id===x.want)&&books.some(b=>b.id===x.offer)).map(x=>({id:x.id,from:x.fromName,to:x.toName,want:x.want,offer:x.offer,money:x.money,status:x.status,fromOk:x.fromOk,toOk:x.toOk,doneAt:x.doneAt,unread:x.unread||0,iRated:!!x.iRated}));
+ wish={};city={};avatars={};myWishes=[];rat={};swp={};(r.ratings||[]).forEach(x=>rat[x.name]=x);(r.swaps||[]).forEach(x=>swp[x.name]=x.n);unreadTotal=reqs.reduce((a,x)=>a+(x.unread||0),0);
  r.users.forEach(u=>{city[u.name]=u.city;avatars[u.name]=!!u.av});
- r.wishes.forEach(w=>{(wish[w.user]=wish[w.user]||[]).push(w.title);if(w.user===me)myWishes.push(w)});
+ srvMatches=r.matches||[];
+ r.wishes.forEach(w=>{(wish[me]=wish[me]||[]).push(w.title);myWishes.push(w)});
  render()}
-async function act(id,what,msg){const r=await api(`/api/requests/${id}/${what}`,"POST");toast(r.error||msg);await boot()}
+async function act(id,what,msg){const r=await api(`/api/requests/${id}/${what}`,"POST");toast(r.error||(r.done?"Échange terminé ! Vous pouvez noter l'autre membre.":msg));await boot()}
 function renderAuth(mode){
  authMode=mode||authMode;const su=authMode==="signup";
- $("#view").innerHTML=`<div class="about authbox"><div class="seg"><button class="tab" data-am="login" aria-selected="${!su}">Connexion</button><button class="tab" data-am="signup" aria-selected="${su}">Inscription</button></div>
+ $("#view").innerHTML=`<div class="about authbox"><p style="margin:0 0 12px"><button class="btn alt" type="button" data-gv="browse" style="margin:0">← Voir les livres</button></p><div class="seg"><button class="tab" data-am="login" aria-selected="${!su}">Connexion</button><button class="tab" data-am="signup" aria-selected="${su}">Inscription</button></div>
  <form id="af" class="add" style="grid-template-columns:1fr">
  ${su?`<label>Nom d'utilisateur<input name="name" required minlength="2" maxlength="30" autocomplete="username"></label>`:""}
  <label>E-mail<input name="email" type="email" required autocomplete="email"></label>
@@ -228,14 +369,16 @@ function renderAuth(mode){
  <button class="btn" type="submit">${su?"Créer mon compte":"Se connecter"}</button></form></div>`+ABOUT.replace(/<button[\s\S]*?<\/button>/,"");
  $("#af").onsubmit=e=>{e.preventDefault();const f=new FormData(e.target),body=Object.fromEntries([...f].filter(([k])=>k!=="avatar"));
   const go=async avatar=>{const r=await api(su?"/api/signup":"/api/login","POST",{...body,avatar});if(r.error){$("#aerr").textContent=r.error;return}await boot()};
-  const file=f.get("avatar");file&&file.size?shrink(file,go,200):go("")}}
+  const file=f.get("avatar");file&&file.size?shrink(file,go,200):go("")};
+ showPublic()}
 function render(){
  document.body.classList.toggle("anon",!me);
- if(!me){renderAuth();return}
+ if(!me){guestRender();return}
+ routeHash();
  $("#mycity").value=city[me];
  $("#who").innerHTML=`${avatars[me]?`<img class="av" src="/api/avatar/${encodeURIComponent(me)}" alt="">`:""}<span>${esc(me)}</span><button data-out>Se déconnecter</button>`;
- document.querySelectorAll(".tab").forEach(t=>t.setAttribute("aria-selected",t.dataset.v===view));
- const inc=reqs.filter(r=>r.to===me&&r.status==="pending").length;
+ document.querySelectorAll(".tab").forEach(t=>t.setAttribute("aria-selected",t.dataset.v===(view==="book"?prevView:view)));
+ const inc=reqs.filter(r=>r.to===me&&r.status==="pending").length+unreadTotal;
  $("#badge").hidden=!inc;$("#badge").textContent=inc;
  const v=$("#view"),M=matches();
  $("#mbadge").hidden=!M.length;$("#mbadge").textContent=M.length;
@@ -249,6 +392,8 @@ function render(){
  }else if(view==="matches"){
   v.innerHTML=`<p style="margin-top:0">Tabadol compare toutes les étagères et listes d'envies. Une correspondance apparaît quand vous possédez un livre que quelqu'un veut et que cette personne possède un livre que vous voulez.</p>`+
   (M.length?M.map(x=>{const s=pend(x);return `<div class="row match"><p><strong>Correspondance avec ${esc(x.u)}</strong> <small>(${esc(city[x.u])}, ${distLbl(x.u)})</small><br>Vous donnez « ${esc(x.my.title)} » (${x.my.value} DH) et recevez « ${esc(x.theirs.title)} » (${x.theirs.value} DH).</p>${s?`<span class="status wait">${s}</span>`:`<button class="btn" data-prop="${x.theirs.id}-${x.my.id}">Proposer cet échange</button>`}</div>`}).join(""):`<p class="empty">Aucune correspondance pour l'instant. Ajoutez des livres souhaités à votre liste d'envies dans Mon étagère.</p>`);
+ }else if(view==="book"){
+  v.innerHTML=bookPage(bookId);
  }else if(view==="about"){
   v.innerHTML=ABOUT;
  }else if(view==="shelf"){
@@ -256,27 +401,39 @@ function render(){
   <label>Auteur<input name="a" required></label>
   <label>Valeur estimée (DH)<input name="v" type="number" min="5" step="5" value="80" required></label>
   <label>État<select name="c"><option>Comme neuf</option><option selected>Bon état</option><option>Usé</option></select></label>
-  <label>Catégorie<select name="k">${CATS.map(c=>`<option>${c}</option>`).join("")}</select></label><label class="full">Photo du livre<input name="p" type="file" accept="image/*"></label><button class="btn full" type="submit">Ajouter à mon étagère</button></form>
-  ${mine().length?`<div class="grid">${mine().map(b=>card(b)).join("")}</div>`:`<p class="empty">Votre étagère est vide. Ajoutez un livre ci-dessus pour commencer à échanger.</p>`}
+  <label>Catégorie<select name="k">${CATS.map(c=>`<option>${c}</option>`).join("")}</select></label><label class="full">Description (facultatif)<textarea name="d" maxlength="500" rows="3" placeholder="État, édition, pages jaunies…"></textarea></label><label class="full">Photos (jusqu'à 3)<input name="p" type="file" accept="image/*" multiple></label><button class="btn full" type="submit">Ajouter à mon étagère</button></form>
+  ${mine().length?`<div class="grid">${mine().map(b=>card(b,delBtn(b))).join("")}</div>`:`<p class="empty">Votre étagère est vide. Ajoutez un livre ci-dessus pour commencer à échanger.</p>`}
   <h2>Ma liste d'envies</h2>
+  <p class="sub">Votre liste est privée : personne ne la voit. Tabadol l'utilise seulement pour trouver des correspondances.</p>
   <form class="add" id="wf" style="grid-template-columns:1fr auto"><label>Livre que vous voulez<input name="w" required></label><button class="btn" type="submit" style="align-self:end;margin-top:0">Ajouter</button></form>
   <div>${wishHtml()}</div>`;
   $("#wf").onsubmit=async e=>{e.preventDefault();const t=new FormData(e.target).get("w").trim();
    if(t&&!myWishes.some(x=>norm(x.title)===norm(t))){const r=await api("/api/wishes","POST",{title:t});if(r.error)toast(r.error);await boot()}};
-  $("#addf").onsubmit=e=>{e.preventDefault();const f=new FormData(e.target),file=f.get("p"),
-   add=async img=>{const r=await api("/api/books","POST",{title:f.get("t"),author:f.get("a"),cond:f.get("c"),cat:f.get("k"),value:+f.get("v"),img});if(r.error){toast(r.error);return}toast("Livre ajouté");await boot()};
-   file&&file.size?shrink(file,add):add("")};
+  $("#addf").onsubmit=async e=>{e.preventDefault();const f=new FormData(e.target),files=f.getAll("p").filter(x=>x&&x.size).slice(0,3);
+   const imgs=await Promise.all(files.map(x=>new Promise(ok=>shrink(x,ok))));
+   const r=await api("/api/books","POST",{title:f.get("t"),author:f.get("a"),cond:f.get("c"),cat:f.get("k"),value:+f.get("v"),description:f.get("d"),img:imgs[0]||"",imgs:imgs.slice(1).filter(Boolean)});
+   if(r.error){toast(r.error);return}toast("Livre ajouté");await boot()};
  }else{
   const line=r=>{const w=get(r.want),o=get(r.offer);
    const m=r.money?` + ${r.money} DH`:"";
    return `<strong>${r.from===me?"Vous proposez":esc(r.from)+" propose"}</strong> « ${esc(o.title)} »${m} contre « ${esc(w.title)} »`};
   const inc=reqs.filter(r=>r.to===me&&r.status==="pending");
+  const going=reqs.filter(r=>r.status==="accepted");
   const sent=reqs.filter(r=>r.from===me&&r.status==="pending");
-  const done=reqs.filter(r=>r.status!=="pending");
+  const fin=reqs.filter(r=>["done","declined","cancelled"].includes(r.status));
+  const other=r=>r.from===me?r.to:r.from;
+  const goingRow=r=>{const mineOk=r.from===me?r.fromOk:r.toOk;
+   return `<div class="row ok"><p>${line(r)}<br><small>Avec ${esc(other(r))} (${esc(city[other(r)]||"")})</small></p>
+   <div class="acts" style="flex-wrap:wrap"><button class="btn" data-chat="${r.id}">Ouvrir le chat${r.unread?` <span class="badge">${r.unread}</span>`:""}</button>
+   ${mineOk?`<span class="status wait">Vous avez confirmé. En attente de ${esc(other(r))}.</span>`:`<button class="btn alt" data-conf="${r.id}">Échange effectué</button>`}
+   <button class="btn alt" data-can="${r.id}">Annuler l'échange</button></div></div>`};
+  const finRow=r=>{const st=r.status==="done"?`<span class="status ok">Échangé</span>${r.iRated?` <span class="status wait">Noté</span>`:Date.now()-r.doneAt<14*864e5?` <button class="btn alt" data-rate="${r.id}" style="margin-left:8px">Noter ${esc(other(r))}</button>`:""}${Date.now()-r.doneAt<7*864e5?` <button class="btn alt" data-chat="${r.id}" style="margin-left:8px">Chat</button>`:""}`:`<span class="status no">${r.status==="declined"?"Refusé":"Annulée"}</span>`;
+   return `<div class="row"><p>${line(r)}</p>${st}</div>`};
   v.innerHTML=`<h2 style="margin-top:0">En attente de votre réponse</h2>`+
    (inc.length?inc.map(r=>`<div class="row"><p>${line(r)}</p><div class="acts"><button class="btn" data-acc="${r.id}">Accepter</button><button class="btn alt" data-dec="${r.id}" style="margin-top:auto">Refuser</button></div></div>`).join(""):`<p class="empty">Aucune demande pour le moment.</p>`)+
+   (going.length?`<h2>Échanges en cours</h2><p class="sub">Discutez dans le chat, retrouvez-vous dans un lieu public, puis confirmez tous les deux. Les livres changent de propriétaire seulement après les deux confirmations.</p>`+going.map(goingRow).join(""):"")+
    `<h2>Envoyées par vous</h2>`+(sent.length?sent.map(r=>`<div class="row"><p>${line(r)}</p><span class="status wait">En attente de ${esc(r.to)}</span> <button class="btn alt" data-can="${r.id}" style="margin-left:8px">Annuler</button></div>`).join(""):`<p class="empty">Rien d'envoyé pour l'instant. Trouvez un livre dans Parcourir.</p>`)+
-   (done.length?`<h2>Terminées</h2>`+done.map(r=>`<div class="row"><p>${line(r)}</p><span class="status ${r.status==="accepted"?"ok":"no"}">${{accepted:"Échangé",declined:"Refusé",cancelled:"Annulée"}[r.status]}</span></div>`).join(""):"");
+   (fin.length?`<h2>Terminées</h2>`+fin.map(finRow).join(""):"");
  }
 }
 function hint(){
@@ -292,7 +449,7 @@ function openSwap(id,pre){target=id;const m=mine();
  const sel=m.some(b=>b.id===pre)?pre:m[0].id;
  $("#picks").innerHTML=m.map(b=>`<label class="pick"><input type="radio" name="pick" value="${b.id}" ${b.id===sel?"checked":""}>${esc(b.title)} <small>(${b.value} DH)</small></label>`).join("");
  $("#money").value=0;hint();$("#dlg").showModal()}
-$("#tabs").onclick=e=>{const t=e.target.closest(".tab");if(t){view=t.dataset.v;render()}};
+$("#tabs").onclick=e=>{const t=e.target.closest(".tab");if(t){view=t.dataset.v;try{if(location.hash)history.replaceState(null,"",location.pathname+location.search)}catch(e){}render()}};
 $("#view").onclick=e=>{
  const q=a=>e.target.closest(`[data-${a}]`);
  if(q("want")){
@@ -301,11 +458,28 @@ $("#view").onclick=e=>{
  if(q("prop")){const [a,b]=q("prop").dataset.prop.split("-");openSwap(+a,+b)}
  if(q("rm")){api("/api/wishes/"+q("rm").dataset.rm,"DELETE").then(boot)}
  if(q("go")){view=q("go").dataset.go;render()}
+ if(q("gv")){const g=q("gv").dataset.gv;
+  if(g==="login"||g==="signup"){gAuth=true;authMode=g;render()}
+  else{gAuth=false;view=g;try{if(location.hash)history.replaceState(null,"",location.pathname+location.search)}catch(err){}render();window.scrollTo(0,0)}}
  const acc=q("acc"),dec=q("dec");
- if(acc)act(acc.dataset.acc,"accept","Échange conclu !");
+ if(acc)act(acc.dataset.acc,"accept","Demande acceptée. Ouvrez le chat pour vous organiser.");
  if(dec)act(dec.dataset.dec,"decline","Demande refusée");
  if(q("can"))act(q("can").dataset.can,"cancel","Demande annulée");
  if(q("am"))renderAuth(q("am").dataset.am);
+ if(q("chat"))openChat(+q("chat").dataset.chat);
+ if(q("conf"))act(q("conf").dataset.conf,"confirm","Confirmation enregistrée. En attente de l'autre personne.");
+ if(q("rate"))openRate(+q("rate").dataset.rate);
+ if(q("del")){delAsk=+q("del").dataset.del;render()}
+ if(q("delno")){delAsk=null;render()}
+ if(q("open")){e.preventDefault();openBook(+q("open").dataset.open)}
+ if(q("back")){view=prevView;try{if(location.hash)history.replaceState(null,"",location.pathname+location.search)}catch(err){}render();window.scrollTo(0,0)}
+ if(q("ph")){$("#bigph").src=photoSrc(bookId,+q("ph").dataset.ph)}
+ if(q("share"))shareBook(+q("share").dataset.share);
+ if(q("repbook")){const bb=get(+q("repbook").dataset.repbook);
+  $("#bpextra").innerHTML=`<div class="add" style="grid-template-columns:1fr;margin:10px 0 0"><label>Que se passe-t-il avec cette annonce ?<input id="rr2" maxlength="300"></label><button class="btn" id="rok2" type="button">Envoyer le signalement</button></div>`;
+  $("#rok2").onclick=async()=>{const why=$("#rr2").value.trim();if(why.length<3){toast("Décrivez le problème");return}
+   const r=await api("/api/report","POST",{user:bb.owner,reason:"Annonce #"+bb.id+" : "+why});toast(r.error||"Signalement envoyé. Merci.");$("#bpextra").innerHTML=""}}
+ if(q("delok")){api("/api/books/"+q("delok").dataset.delok,"DELETE").then(r=>{delAsk=null;toast(r.error||"Livre supprimé");if(view==="book"&&!r.error)view=prevView;return boot()})}
 };
 $("#picks").onchange=hint;
 $("#cancel").onclick=()=>$("#dlg").close();
@@ -318,7 +492,9 @@ $("#send").onclick=async()=>{
 $("#mycity").innerHTML=Object.keys(CITIES).map(c=>`<option>${c}</option>`).join("");
 $("#mycity").onchange=async e=>{await api("/api/me","PATCH",{city:e.target.value});await boot()};
 $("#who").onclick=async e=>{if(e.target.closest("[data-out]")){await api("/api/logout","POST");me=null;await boot()}};
+window.addEventListener("popstate",()=>{if(view==="book"&&!/^#\/livre\//.test(location.hash))view=prevView;render()});
 boot();
+setInterval(async()=>{if(!me||document.hidden||chatId)return;const r=await api("/api/unread");if(r.error)return;unreadTotal=r.unread;const n=r.pending+r.unread;$("#badge").hidden=!n;$("#badge").textContent=n},20000);
 </script>
 </body>
 </html>
