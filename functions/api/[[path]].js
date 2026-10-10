@@ -1,5 +1,5 @@
 // Tabadol back end: Cloudflare Pages Functions + D1 (SQLite). All routes live under /api/.
-const CITIES=["Casablanca","Rabat","Kénitra","Marrakech","Fès","Meknès","Tanger","Tétouan","Agadir","El Jadida","Oujda"];
+const CITIES=["Casablanca","Rabat","Kénitra","Marrakech","Fès","Meknès","Tanger","Tétouan","Agadir","El Jadida","Oujda","Al Hoceïma","Asilah","Azrou","Azilal","Benslimane","Béni Mellal","Berkane","Berrechid","Chefchaouen","Dakhla","Errachidia","Essaouira","Fnideq","Guelmim","Guercif","Ifrane","Inezgane","Khémisset","Khouribga","Ksar El Kébir","Laâyoune","Larache","Martil","Midelt","Mohammedia","Nador","Ouarzazate","Oued Zem","Safi","Salé","Settat","Sidi Kacem","Sidi Slimane","Skhirat","Smara","Tan-Tan","Taroudant","Taza","Témara","Tinghir","Tiznit","Zagora"];
 const CATS=["Roman","Science-fiction","Fantasy","Histoire","Biographie","Développement personnel","Jeunesse","Études"];
 const CONDS=["Comme neuf","Bon état","Usé"];
 const J=(d,s=200,h={})=>new Response(JSON.stringify(d),{status:s,headers:{"content-type":"application/json",...h}});
