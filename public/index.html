@@ -6,7 +6,7 @@
 <meta name="description" content="Tabadol : échangez les livres que vous avez lus contre ceux que vous voulez. Échange de livres gratuit entre lecteurs au Maroc.">
 <title>تبادل Tabadol – échangez des livres au Maroc</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Young+Serif&family=DM+Sans:wght@400;500;700&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Young+Serif&family=DM+Sans:wght@400;500;700&family=Amiri:wght@400;700&family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#f6f1e3;--ink:#1f2a24;--muted:#5b6556;--card:#fffdf6;--line:#ddd3b8;--accent:#0f5c4d;--on-accent:#fff;--good:#0f5c4d;--bad:#9c2b2b;--gold:#c8962e;--gold-d:#8a6414;
 box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
@@ -27,7 +27,7 @@ header p{margin:8px 0 22px;color:var(--muted);max-width:34ch}
 nav,.seg{display:flex;gap:4px;background:var(--line);padding:4px;border-radius:8px;margin-bottom:22px;overflow-x:auto}
 .tab{flex:1;background:none;border:0;border-radius:5px;padding:9px 10px;font-size:.95rem;font-weight:700;color:var(--muted);cursor:pointer;white-space:nowrap}
 .tab[aria-selected="true"]{background:var(--card);color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.18)}
-.badge{background:var(--gold);color:#14161f;border-radius:99px;padding:0 7px;font-size:.78rem;margin-left:6px}
+.badge{background:var(--gold);color:#14161f;border-radius:99px;padding:0 7px;font-size:.78rem;margin-inline-start:6px}
 :focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:22px 16px}
 @media(min-width:560px){.grid{grid-template-columns:repeat(3,1fr)}}
@@ -42,8 +42,8 @@ nav,.seg{display:flex;gap:4px;background:var(--line);padding:4px;border-radius:8
 .btn{background:var(--accent);color:var(--on-accent);border:0;border-radius:6px;padding:10px 12px;font-weight:700;font-size:.92rem;cursor:pointer;margin-top:auto}
 .info .btn{margin-top:8px}
 .btn.alt{background:transparent;color:var(--ink);box-shadow:inset 0 0 0 1.5px var(--line)}
-.row{background:var(--card);border-left:4px solid var(--line);border-radius:4px 8px 8px 4px;padding:14px 16px;margin-bottom:10px}
-.row.match{border-left-color:var(--gold)}
+.row{background:var(--card);border-inline-start:4px solid var(--line);border-start-start-radius:4px;border-end-start-radius:4px;border-start-end-radius:8px;border-end-end-radius:8px;padding:14px 16px;margin-bottom:10px}
+.row.match{border-inline-start-color:var(--gold)}
 .row p{margin:0 0 10px}
 .acts{display:flex;gap:8px}
 .status{font-weight:700;font-size:.88rem}
@@ -54,14 +54,14 @@ form.add .full{grid-column:1/-1}
 label{font-size:.88rem;font-weight:700;display:grid;gap:4px}
 input,select,textarea{font-size:1rem;padding:10px;border:1.5px solid var(--line);border-radius:6px;background:var(--bg);color:var(--ink);width:100%}
 .empty{color:var(--muted);padding:16px 0}
-.chip{display:inline-flex;align-items:center;gap:6px;background:var(--card);border-radius:99px;padding:4px 6px 4px 14px;margin:0 6px 6px 0;font-size:.95rem}
+.chip{display:inline-flex;align-items:center;gap:6px;background:var(--card);border-radius:99px;padding:4px 6px;padding-inline-start:14px;margin:0 0 6px;margin-inline-end:6px;font-size:.95rem}
 .chip button{border:0;background:var(--bg);color:var(--ink);border-radius:50%;width:24px;height:24px;cursor:pointer;font-size:1rem;line-height:1}
 .flag{background:var(--gold);color:#14161f;border-radius:4px;padding:2px 8px;font-weight:700;font-size:.78rem;align-self:flex-start;margin-top:4px}
 dialog{border:0;border-radius:10px;background:var(--card);color:var(--ink);width:min(92vw,440px);padding:20px;box-shadow:0 20px 50px -10px rgba(0,0,0,.5)}
 dialog::backdrop{background:rgba(24,30,24,.55)}
 .pick{display:flex;gap:10px;align-items:center;border:1.5px solid var(--line);border-radius:6px;padding:9px 10px;margin-bottom:6px;font-weight:400;cursor:pointer}
 .pick input{width:auto}
-.hint{background:var(--bg);border-left:3px solid var(--gold);border-radius:4px;padding:10px 12px;font-size:.92rem;margin:12px 0}
+.hint{background:var(--bg);border-inline-start:3px solid var(--gold);border-radius:4px;padding:10px 12px;font-size:.92rem;margin:12px 0}
 #toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:99px;font-weight:700;font-size:.92rem;opacity:0;pointer-events:none;transition:opacity .2s}
 #toast.show{opacity:1}
 @media(prefers-reduced-motion:reduce){#toast{transition:none}}
@@ -70,32 +70,25 @@ dialog::backdrop{background:rgba(24,30,24,.55)}
 .sub{color:var(--muted);font-size:.88rem;margin:0 0 18px}
 .cityl{display:flex;align-items:center;gap:8px;margin:0 0 20px;font-weight:700}
 .cityl select{width:auto}
-.cp{position:relative;display:block;font-weight:400}
-.cityl .cp{width:200px}
-.cp ul{position:absolute;z-index:30;left:0;right:0;top:100%;max-height:230px;overflow:auto;margin:4px 0 0;padding:4px;list-style:none;background:var(--card);border:1.5px solid var(--line);border-radius:6px;box-shadow:0 12px 28px -8px rgba(0,0,0,.35)}
-.cp li{padding:9px 10px;border-radius:4px;cursor:pointer}
-.cp li.on{background:var(--line)}
-.cp li[aria-selected="true"]{font-weight:700}
-.cp li.none{cursor:default;color:var(--muted)}
 .cover.ph{display:block}
 .cover.ph img{width:100%;height:100%;object-fit:cover;display:block}
 .flag.alt{background:var(--line);color:var(--ink)}
 .about{background:var(--card);border-radius:8px;padding:20px}
 .about p{margin:0 0 12px}
-.about ol,.about ul{padding-left:22px;margin:0 0 12px}
+.about ol,.about ul{padding-inline-start:22px;margin:0 0 12px}
 .about li{margin-bottom:8px}
 .about .ar2{font:700 1.4rem/1.5 Amiri,"Noto Naskh Arabic",serif;color:var(--gold-d);margin:16px 0}
 .av{width:28px;height:28px;border-radius:50%;object-fit:cover;background:var(--line);flex:none}
 .userbar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:20px}
 .userbar .cityl{margin:0}
-#who{margin-left:auto;display:flex;align-items:center;gap:8px;font-weight:700}
+#who{margin-inline-start:auto;display:flex;align-items:center;gap:8px;font-weight:700}
 #who button{background:none;border:0;color:var(--accent);font-weight:700;cursor:pointer;text-decoration:underline;padding:4px}
 .anon nav,.anon .userbar{display:none}
 .authbox{margin-bottom:18px}
 .authbox .seg{margin-bottom:16px}
 .err{color:var(--bad);font-weight:700;margin:0;min-height:1.2em}
 .owner{display:flex;align-items:center;gap:8px;font-weight:700}
-.row.ok{border-left-color:var(--good)}
+.row.ok{border-inline-start-color:var(--good)}
 .btn.bad{background:var(--bad);color:#fff}
 #cmsgs{height:240px;overflow:auto;background:var(--bg);border-radius:6px;padding:10px;display:flex;flex-direction:column;gap:6px;margin-bottom:10px}
 .msg{max-width:82%;padding:7px 10px;border-radius:10px;background:var(--card);border:1px solid var(--line);align-self:flex-start;overflow-wrap:anywhere}
@@ -104,7 +97,7 @@ dialog::backdrop{background:rgba(24,30,24,.55)}
 .cform{display:flex;gap:8px}.cform .btn{margin-top:0}
 #stars button{background:none;border:0;font-size:2.4rem;line-height:1;cursor:pointer;color:var(--line);padding:0 3px}
 #stars button.on{color:var(--gold)}
-.rtag{display:inline-flex;gap:6px;align-items:center;margin-right:12px;font-weight:400}.rtag input{width:auto}
+.rtag{display:inline-flex;gap:6px;align-items:center;margin-inline-end:12px;font-weight:400}.rtag input{width:auto}
 .cl{display:block;color:inherit;text-decoration:none}
 .bigph{width:100%;max-height:440px;object-fit:contain;background:var(--line);border-radius:6px;display:block}
 .thumbs{display:flex;gap:8px;margin-top:8px}
@@ -114,12 +107,21 @@ dialog::backdrop{background:rgba(24,30,24,.55)}
 @media(min-width:620px){.bookpage{grid-template-columns:280px 1fr}}
 .bp-desc{white-space:pre-wrap;background:var(--card);border-radius:6px;padding:10px 12px;margin:0 0 12px}
 .linkbtn{background:none;border:0;color:var(--accent);font-weight:700;text-decoration:underline;cursor:pointer;padding:0;font-size:inherit}
-.guestbar{background:var(--card);border-left:4px solid var(--gold);border-radius:4px;padding:10px 12px;margin:0 0 14px}
+.guestbar{background:var(--card);border-inline-start:4px solid var(--gold);border-radius:4px;padding:10px 12px;margin:0 0 14px}
+.langrow{display:flex;justify-content:flex-end;margin-bottom:8px}
+.langbtn{border:1.5px solid var(--line);background:var(--card);color:var(--ink);border-radius:99px;padding:4px 14px;font-weight:700;cursor:pointer;font-size:.9rem}
+html[lang=ar] body{font-family:Tajawal,"DM Sans",system-ui,sans-serif}
+html[lang=ar] h1,html[lang=ar] h2,html[lang=ar] h3,html[lang=ar] .cover b{font-family:Amiri,"Young Serif",serif}
+[dir=rtl] .cover{border-radius:7px 3px 3px 7px;box-shadow:inset -7px 0 0 rgba(0,0,0,.2),0 6px 14px -8px rgba(0,0,0,.45)}
+[dir=rtl] .cover i,[dir=rtl] .cover .mid{padding-left:10px;padding-right:16px}
+[dir=rtl] header p.ar{text-align:right}
+[dir=rtl] input[type=email],[dir=rtl] input[type=password],[dir=rtl] input[type=tel]{direction:ltr;text-align:right}
 </style>
 </head>
 <body>
 <div class="wrap">
 <header>
+  <div class="langrow"><button id="langbtn" class="langbtn" type="button" aria-label="Langue / اللغة">العربية</button></div>
   <div class="brand">
     <svg class="mark" viewBox="0 0 48 48" role="img" aria-label="Logo Tabadol"><rect width="48" height="48" rx="11" fill="#0f5c4d"/><rect x="11" y="17" width="9" height="14" rx="1.5" fill="#fbf6e6"/><rect x="28" y="17" width="9" height="14" rx="1.5" fill="#c8962e"/><g fill="none" stroke="#fbf6e6" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M13 10.5h22M31 7l4 3.5-4 3.5"/><path d="M35 37.5H13M17 34l-4 3.5 4 3.5"/></g></svg>
     <div>
@@ -172,42 +174,52 @@ dialog::backdrop{background:rgba(24,30,24,.55)}
 <div id="toast" role="status"></div>
 
 <script>
+// ---- Language (French / Arabic). French is the source text; Arabic is applied when text is displayed.
+let lang="fr";try{lang=localStorage.getItem("tabadol_lang")||((navigator.language||"").toLowerCase().startsWith("ar")?"ar":"fr")}catch(e){}
+const DICT=[["Parcourir", "تصفّح"], ["Correspondances", "التطابقات"], ["Mon étagère", "مكتبتي"], ["Demandes", "الطلبات"], ["À propos", "من نحن"], ["Connexion", "تسجيل الدخول"], ["Inscription", "إنشاء حساب"], ["Se déconnecter", "تسجيل الخروج"], ["Ma ville", "مدينتي"], ["Échangez les livres que vous avez finis contre ceux que vous voulez lire ensuite, partout au Maroc.", "بدّل الكتب التي أنهيتها بالكتب التي تريد قراءتها بعد ذلك، في كل أنحاء المغرب."], ["Logo Tabadol", "شعار تبادل"], ["Choisissez un de vos livres à proposer :", "اختر أحد كتبك لتقترحه:"], ["Ajouter de l'argent (facultatif)", "إضافة مبلغ مالي (اختياري)"], ["Envoyer la demande d'échange", "إرسال طلب التبادل"], ["Annuler", "إلغاء"], ["Échanger contre ", "التبادل مقابل "], ["Choisissez un livre pour comparer les valeurs.", "اختر كتابًا لمقارنة القيمتين."], ["Les deux livres ont à peu près la même valeur. Un échange direct convient.", "للكتابين قيمة متقاربة. يناسبكما تبادل مباشر."], ["Retrouvez-vous dans un lieu public, de jour. Ne partagez pas votre adresse.", "التقيا في مكان عام وخلال النهار. لا تشاركا عنوان سكنكما."], ["Votre message", "رسالتك"], ["Envoyer", "إرسال"], ["Proposer un rendez-vous", "اقتراح موعد"], ["Signaler", "إبلاغ"], ["Fermer", "إغلاق"], ["Lieu public", "مكان عام"], ["Café, bibliothèque, gare…", "مقهى، مكتبة، محطة…"], ["Date et heure", "التاريخ والساعة"], ["Envoyer la proposition", "إرسال الاقتراح"], ["Que s'est-il passé ?", "ماذا حدث؟"], ["Envoyer le signalement", "إرسال البلاغ"], ["Indiquez un lieu et une date", "حدّد مكانًا وتاريخًا"], ["Décrivez le problème", "صف المشكلة"], ["Signalement envoyé. Merci.", "تم إرسال البلاغ. شكرًا."], ["Que se passe-t-il avec cette annonce ?", "ما المشكلة في هذا الإعلان؟"], ["Chat", "الدردشة"], ["Ouvrir le chat", "فتح الدردشة"], ["Note", "التقييم"], ["Commentaire (facultatif)", "تعليق (اختياري)"], ["Envoyer la note", "إرسال التقييم"], ["Plus tard", "لاحقًا"], ["Noter ", "تقييم "], ["Choisissez une note", "اختر تقييمًا"], ["Merci pour votre note", "شكرًا على تقييمك"], ["Votre note sera visible quand l'autre personne aura noté aussi, ou après 7 jours.", "سيظهر تقييمك عندما يقيّم الطرف الآخر أيضًا، أو بعد 7 أيام."], ["Ponctuel", "دقيق في المواعيد"], ["Livre conforme", "الكتاب مطابق للوصف"], ["Aimable", "لطيف"], ["Noté", "تم التقييم"], ["Créez un compte gratuit", "أنشئ حسابًا مجانيًا"], ["pour publier vos livres et proposer des échanges.", "لنشر كتبك واقتراح التبادلات."], ["S'inscrire", "إنشاء حساب"], ["Rechercher un titre ou un auteur", "ابحث عن عنوان أو مؤلف"], ["Rechercher un livre", "البحث عن كتاب"], ["Catégorie", "التصنيف"], ["État du livre (occasion)", "حالة الكتاب (مستعمل)"], ["Toutes les catégories", "كل التصنيفات"], ["Tous les états", "كل الحالات"], ["Les livres que vous cherchez, dont le propriétaire veut un des vôtres, dans votre ville ou à proximité, apparaissent en premier.", "تظهر أولًا الكتب التي تبحث عنها ويريد صاحبها أحد كتبك، في مدينتك أو بالقرب منها."], ["Aucun livre ne correspond à votre recherche.", "لا يوجد كتاب يطابق بحثك."], ["Aucun livre à parcourir pour le moment.", "لا توجد كتب للتصفح حاليًا."], ["Échanger contre celui-ci", "التبادل مقابل هذا الكتاب"], ["Échanger contre ce livre", "تبادل مقابل هذا الكتاب"], ["Échanger", "تبادل"], ["Correspondance mutuelle", "تطابق متبادل"], ["Sur votre liste d'envies", "في قائمة أمنياتك"], ["Voir l'annonce : ", "عرض الإعلان: "], ["Vous (c'est votre annonce)", "أنت (هذا إعلانك)"], ["Vous proposez", "أنت تقترح"], ["Vous donnez ", "تعطي "], [" et recevez ", " وتحصل على "], ["Vous", "أنت"], ["Membre à ", "عضو في "], ["Nouveau", "جديد"], ["même ville", "نفس المدينة"], ["valeur d'environ", "القيمة التقريبية"], ["Supprimer", "حذف"], ["Oui, supprimer", "نعم، احذف"], ["Non", "لا"], ["← Retour", "→ رجوع"], ["Retour", "رجوع"], ["Partager", "مشاركة"], ["Autres livres de ", "كتب أخرى لـ "], ["votre étagère", "مكتبتك"], ["Photo de profil ou logo (facultatif)", "صورة الملف الشخصي أو الشعار (اختياري)"], ["Photo de ", "صورة "], ["Photo ", "صورة "], ["Cette annonce n'existe plus.", "هذا الإعلان لم يعد موجودًا."], ["← Voir les livres", "→ عرض الكتب"], ["Voir les livres", "عرض الكتب"], ["Inscrivez-vous gratuitement pour proposer cet échange.", "سجّل مجانًا لتقترح هذا التبادل."], ["Découvrir les livres", "اكتشف الكتب"], ["Connectez-vous ou créez un compte gratuit pour proposer un échange.", "سجّل الدخول أو أنشئ حسابًا مجانيًا لتقترح تبادلًا."], [" · membre à ", " · عضو في "], ["Nom d'utilisateur", "اسم المستخدم"], ["E-mail", "البريد الإلكتروني"], ["Mot de passe", "كلمة المرور"], [" (8 caractères minimum)", " (8 أحرف على الأقل)"], ["Ville", "المدينة"], ["Téléphone (facultatif)", "الهاتف (اختياري)"], ["Créer mon compte", "إنشاء حسابي"], ["Se connecter", "تسجيل الدخول"], ["Titre", "العنوان"], ["Auteur", "المؤلف"], ["Valeur estimée (DH)", "القيمة التقديرية (بالدرهم)"], ["État", "الحالة"], ["Description (facultatif)", "الوصف (اختياري)"], ["Photos (jusqu'à 3)", "الصور (حتى 3)"], ["Ajouter à mon étagère", "أضف إلى مكتبتي"], ["Votre étagère est vide. Ajoutez un livre ci-dessus pour commencer à échanger.", "مكتبتك فارغة. أضف كتابًا أعلاه لتبدأ التبادل."], ["Ma liste d'envies", "قائمة أمنياتي"], ["Votre liste est privée : personne ne la voit. Tabadol l'utilise seulement pour trouver des correspondances.", "قائمتك خاصة: لا يراها أحد. يستعملها «تبادل» فقط لإيجاد التطابقات."], ["Livre que vous voulez", "الكتاب الذي تريده"], ["Ajouter", "إضافة"], ["Aucune envie pour le moment. Ajoutez un livre que vous aimeriez recevoir.", "لا توجد أمنيات حاليًا. أضف كتابًا تتمنى الحصول عليه."], ["Retirer ", "إزالة "], ["État, édition, pages jaunies…", "الحالة، الطبعة، صفحات مصفرّة…"], ["Tabadol compare toutes les étagères et listes d'envies. Une correspondance apparaît quand vous possédez un livre que quelqu'un veut et que cette personne possède un livre que vous voulez.", "يقارن «تبادل» كل المكتبات وقوائم الأمنيات. يظهر تطابق عندما تملك كتابًا يريده شخص ما، ويملك هذا الشخص كتابًا تريده أنت."], ["Correspondance avec ", "تطابق مع "], ["Proposer cet échange", "اقترح هذا التبادل"], ["Aucune correspondance pour l'instant. Ajoutez des livres souhaités à votre liste d'envies dans Mon étagère.", "لا توجد تطابقات حاليًا. أضف الكتب التي تريدها إلى قائمة أمنياتك في مكتبتي."], ["Demande envoyée", "تم إرسال الطلب"], ["Demande déjà reçue de sa part. Voir Demandes.", "وصلك طلب منه بالفعل. انظر الطلبات."], ["En attente de votre réponse", "في انتظار ردّك"], ["Aucune demande pour le moment.", "لا توجد طلبات حاليًا."], ["Accepter", "قبول"], ["Refuser", "رفض"], ["Échanges en cours", "تبادلات جارية"], ["Discutez dans le chat, retrouvez-vous dans un lieu public, puis confirmez tous les deux. Les livres changent de propriétaire seulement après les deux confirmations.", "تحدثا في الدردشة، والتقيا في مكان عام، ثم أكّدا معًا. لا ينتقل الكتابان إلى مالكيهما الجديدين إلا بعد تأكيد الطرفين."], ["Avec ", "مع "], [" avec ", " مع "], [" contre ", " مقابل "], ["Échange effectué", "تم التبادل"], ["Annuler l'échange", "إلغاء التبادل"], ["Vous avez confirmé. En attente de ", "لقد أكدت. في انتظار "], ["En attente de ", "في انتظار "], ["Envoyées par vous", "المرسلة منك"], ["Rien d'envoyé pour l'instant. Trouvez un livre dans Parcourir.", "لم ترسل شيئًا بعد. اعثر على كتاب في صفحة التصفح."], ["Terminées", "المنتهية"], ["Échangé", "تم التبادل"], ["Refusé", "مرفوض"], ["Annulée", "ملغى"], ["Livre ajouté", "تمت إضافة الكتاب"], ["Livre supprimé", "تم حذف الكتاب"], ["Lien copié", "تم نسخ الرابط"], ["Copiez le lien", "انسخ الرابط"], ["Demande acceptée. Ouvrez le chat pour vous organiser.", "تم قبول الطلب. افتح الدردشة لتنظّما."], ["Demande refusée", "تم رفض الطلب"], ["Demande annulée", "تم إلغاء الطلب"], ["Échange terminé ! Vous pouvez noter l'autre membre.", "اكتمل التبادل! يمكنك الآن تقييم العضو الآخر."], ["Confirmation enregistrée. En attente de l'autre personne.", "تم تسجيل تأكيدك. في انتظار الطرف الآخر."], ["Nouvelle correspondance avec ", "تطابق جديد مع "], ["Demande envoyée à ", "تم إرسال الطلب إلى "], ["Ajoutez d'abord un livre à votre étagère", "أضف أولًا كتابًا إلى مكتبتك"], ["Connexion impossible. Réessayez.", "تعذّر الاتصال. أعد المحاولة."], ["Je propose ce livre à l'échange sur Tabadol", "أعرض هذا الكتاب للتبادل على «تبادل»"], [" sur Tabadol", " على «تبادل»"], ["50 envies maximum.", "الحد الأقصى 50 أمنية."], ["Annonce introuvable.", "الإعلان غير موجود."], ["Annulation impossible.", "لا يمكن الإلغاء."], ["Ce livre est réservé par un échange en cours.", "هذا الكتاب محجوز في تبادل جارٍ."], ["Ce livre n'est plus disponible.", "هذا الكتاب لم يعد متاحًا."], ["Ce nom d'utilisateur ou cet e-mail est déjà utilisé.", "اسم المستخدم أو البريد الإلكتروني مستعمل بالفعل."], ["Choisissez une note de 1 à 5.", "اختر تقييمًا من 1 إلى 5."], ["Choisissez votre ville.", "اختر مدينتك."], ["Connectez-vous d'abord.", "سجّل الدخول أولًا."], ["Demande déjà envoyée.", "تم إرسال الطلب من قبل."], ["Demande introuvable.", "الطلب غير موجود."], ["Demande invalide.", "طلب غير صالح."], ["Discussion fermée.", "الدردشة مغلقة."], ["Discussion introuvable.", "الدردشة غير موجودة."], ["E-mail invalide.", "بريد إلكتروني غير صالح."], ["E-mail ou mot de passe incorrect.", "البريد الإلكتروني أو كلمة المرور غير صحيحة."], ["Erreur du serveur.", "خطأ في الخادم."], ["Informations du livre invalides.", "معلومات الكتاب غير صالحة."], ["Introuvable.", "غير موجود."], ["Livre introuvable.", "الكتاب غير موجود."], ["Message vide ou trop long.", "الرسالة فارغة أو طويلة جدًا."], ["Mot de passe : 8 caractères minimum.", "كلمة المرور: 8 أحرف على الأقل."], ["Nom d'utilisateur invalide (2 à 30 caractères).", "اسم المستخدم غير صالح (من 2 إلى 30 حرفًا)."], ["Notation impossible.", "التقييم غير ممكن."], ["Photo invalide ou trop lourde.", "الصورة غير صالحة أو ثقيلة جدًا."], ["Requête refusée.", "تم رفض الطلب."], ["Signalement invalide.", "بلاغ غير صالح."], ["Titre invalide.", "عنوان غير صالح."], ["Trop de messages. Patientez un instant.", "رسائل كثيرة. انتظر قليلًا."], ["Un de ces livres est déjà réservé par un échange en cours.", "أحد هذين الكتابين محجوز في تبادل جارٍ."], ["Ville invalide.", "مدينة غير صالحة."], ["Vous avez déjà noté cet échange.", "لقد قيّمت هذا التبادل من قبل."], ["Échange non confirmable.", "لا يمكن تأكيد هذا التبادل."], ["Roman", "رواية"], ["Science-fiction", "خيال علمي"], ["Fantasy", "فانتازيا"], ["Histoire", "تاريخ"], ["Biographie", "سيرة ذاتية"], ["Développement personnel", "تنمية ذاتية"], ["Jeunesse", "كتب الأطفال والشباب"], ["Études", "كتب دراسية"], ["Comme neuf", "كالجديد"], ["Bon état", "حالة جيدة"], ["Usé", "مستعمل"], ["Casablanca", "الدار البيضاء"], ["Rabat", "الرباط"], ["Salé", "سلا"], ["Témara", "تمارة"], ["Skhirat", "الصخيرات"], ["Kénitra", "القنيطرة"], ["Mohammedia", "المحمدية"], ["Marrakech", "مراكش"], ["Fès", "فاس"], ["Meknès", "مكناس"], ["Tanger", "طنجة"], ["Tétouan", "تطوان"], ["Martil", "مرتيل"], ["M'diq", "المضيق"], ["Fnideq", "الفنيدق"], ["Chefchaouen", "شفشاون"], ["Ouezzane", "وزان"], ["Larache", "العرائش"], ["Asilah", "أصيلة"], ["Ksar El Kébir", "القصر الكبير"], ["Agadir", "أكادير"], ["Inezgane", "إنزكان"], ["Aït Melloul", "آيت ملول"], ["Taroudant", "تارودانت"], ["Tiznit", "تيزنيت"], ["El Jadida", "الجديدة"], ["Berrechid", "برشيد"], ["Settat", "سطات"], ["Khouribga", "خريبكة"], ["Oued Zem", "وادي زم"], ["Béni Mellal", "بني ملال"], ["Fquih Ben Salah", "الفقيه بن صالح"], ["Azilal", "أزيلال"], ["Khénifra", "خنيفرة"], ["Midelt", "ميدلت"], ["Errachidia", "الرشيدية"], ["Tinghir", "تنغير"], ["Ouarzazate", "ورزازات"], ["Zagora", "زاكورة"], ["Safi", "آسفي"], ["Youssoufia", "اليوسفية"], ["El Kelaâ des Sraghna", "قلعة السراغنة"], ["Essaouira", "الصويرة"], ["Khémisset", "الخميسات"], ["Sidi Kacem", "سيدي قاسم"], ["Sidi Slimane", "سيدي سليمان"], ["Souk El Arbaa", "سوق الأربعاء"], ["Ifrane", "إفران"], ["Azrou", "أزرو"], ["Sefrou", "صفرو"], ["Taza", "تازة"], ["Guercif", "جرسيف"], ["Al Hoceïma", "الحسيمة"], ["Nador", "الناظور"], ["Berkane", "بركان"], ["Taourirt", "تاوريرت"], ["Oujda", "وجدة"], ["Guelmim", "كلميم"], ["Tan-Tan", "طانطان"], ["Laâyoune", "العيون"], ["Dakhla", "الداخلة"]];
+const RX=[
+ [/ vaut environ (\d+) DH de plus que le vôtre\. Ajouter (\d+) DH rééquilibrerait l'échange\./g," تزيد قيمته عن قيمة كتابك بنحو $1 درهم. إضافة $2 درهم تحقق التوازن."],
+ [/Votre livre vaut environ (\d+) DH de plus\. Le propriétaire peut ajouter de l'argent, ou vous pouvez échanger tel quel\./g,"قيمة كتابك أعلى بنحو $1 درهم. يمكن للمالك إضافة مبلغ، أو يمكنكما التبادل كما هو."],
+ [/(\d+) DH/g,"$1 درهم"],
+ [/à (\d+) km/g,"على بعد $1 كم"],
+ [/(\d) sur 5/g,"$1 من 5"],
+ [/ propose(?![\p{L}])/gu," يقترح"],
+ [/ !$/g,"!"]
+];
+const RULES=(()=>{
+ const L=x=>/^[\p{L}\p{N}]/u.test(x),R=x=>/[\p{L}\p{N}]$/u.test(x);
+ const plain=d=>[new RegExp((L(d[0])?"(^|[^\\p{L}\\p{N}])":"()")+d[0].replace(/[.*+?^${}()|[\]\\]/g,"\\$&")+(R(d[0])?"(?![\\p{L}\\p{N}])":""),"gu"),"$1"+d[1]];
+ const long=DICT.filter(d=>d[0].length>=20).sort((a,b)=>b[0].length-a[0].length),short=DICT.filter(d=>d[0].length<20).sort((a,b)=>b[0].length-a[0].length);
+ return [...long.map(plain),...RX,...short.map(plain)]})();
+function trText(s){if(lang!=="ar"||typeof s!=="string"||!s)return s;for(const[re,r]of RULES)s=s.replace(re,r);return s}
+// User content is wrapped by esc() in invisible markers so it is never translated; the markers are removed here.
+function trHtml(h){
+ h=String(h);const st=[];
+ h=h.replace(/\u2063([\s\S]*?)\u2064/g,(m,x)=>(st.push(x),"\uE000"+(st.length-1)+"\uE001"));
+ if(lang==="ar")h=h.replace(/(<[^>]*>)|([^<]+)/g,(m,tag,txt)=>tag?tag.replace(/\b(placeholder|aria-label|title|alt)="([^"]*)"/g,(a,k,v)=>k+'="'+trText(v)+'"'):trText(txt));
+ return h.replace(/\uE000(\d+)\uE001/g,(m,i)=>st[+i])}
+if(typeof Element!=="undefined"){
+ const ih=Object.getOwnPropertyDescriptor(Element.prototype,"innerHTML");
+ Object.defineProperty(Element.prototype,"innerHTML",{configurable:true,get:ih.get,set(v){ih.set.call(this,trHtml(v))}});
+ const tc=Object.getOwnPropertyDescriptor(Node.prototype,"textContent");
+ Object.defineProperty(Element.prototype,"textContent",{configurable:true,get:tc.get,set(v){tc.set.call(this,this.closest&&this.closest("[translate=no]")?v:trText(v))}});
+}
+function staticTr(){
+ const skip="#ctitle,#cmsgs,#cextra,#rtitle,#stars,#rtags,#rhint,#dtitle,#picks,#hint,#toast,#who,#mycity,[translate=no]";
+ document.querySelectorAll("header,dialog,#tabs").forEach(root=>{
+  const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);let n;
+  while(n=w.nextNode()){if(n.parentElement&&n.parentElement.closest(skip))continue;if(n.__fr===undefined)n.__fr=n.nodeValue;const v=lang==="ar"?trText(n.__fr):n.__fr;if(n.nodeValue!==v)n.nodeValue=v}
+  root.querySelectorAll("[placeholder],[aria-label]").forEach(el=>{for(const a of["placeholder","aria-label"]){if(!el.hasAttribute(a))continue;const k="__fr_"+a;if(el[k]===undefined)el[k]=el.getAttribute(a);const v=lang==="ar"?trText(el[k]):el[k];if(el.getAttribute(a)!==v)el.setAttribute(a,v)}})})}
+function applyLang(){
+ document.documentElement.lang=lang;document.documentElement.dir=lang==="ar"?"rtl":"ltr";
+ document.title=lang==="ar"?"تبادل Tabadol – تبادل الكتب في المغرب":"تبادل Tabadol – échangez des livres au Maroc";
+ $("#langbtn").textContent=lang==="ar"?"Français":"العربية";
+ staticTr();fillCities()}
+function setLang(l){lang=l;try{localStorage.setItem("tabadol_lang",l)}catch(e){}applyLang();render()}
 const COLORS=[["#0f5c4d","#fff"],["#7a1f2b","#fff"],["#c8962e","#1f2a24"],["#5b6b2e","#fff"],["#5e2a5a","#fff"],["#1b5e6b","#fff"]];
 let me=null,myWishes=[],avatars={},authMode="login",rat={},swp={},unreadTotal=0,chatId=null,chatLast=0,chatTimer=null,rateId=null,rateStars=0,delAsk=null,bookId=null,prevView="browse";
-const CITIES={"Casablanca":[33.57,-7.59],"Rabat":[34.02,-6.84],"Kénitra":[34.26,-6.58],"Marrakech":[31.63,-8.01],"Fès":[34.03,-5.0],"Meknès":[33.89,-5.55],"Tanger":[35.76,-5.8],"Tétouan":[35.57,-5.37],"Agadir":[30.43,-9.6],"El Jadida":[33.23,-8.5],"Oujda":[34.68,-1.91],"Al Hoceïma":[35.25,-3.94],"Asilah":[35.47,-6.03],"Azrou":[33.43,-5.22],"Azilal":[31.96,-6.57],"Benslimane":[33.62,-7.12],"Béni Mellal":[32.34,-6.35],"Berkane":[34.92,-2.32],"Berrechid":[33.27,-7.59],"Chefchaouen":[35.17,-5.27],"Dakhla":[23.68,-15.96],"Errachidia":[31.93,-4.43],"Essaouira":[31.51,-9.77],"Fnideq":[35.85,-5.36],"Guelmim":[28.99,-10.06],"Guercif":[34.23,-3.35],"Ifrane":[33.53,-5.11],"Inezgane":[30.35,-9.54],"Khémisset":[33.82,-6.07],"Khouribga":[32.88,-6.91],"Ksar El Kébir":[35.0,-5.9],"Laâyoune":[27.15,-13.2],"Larache":[35.19,-6.15],"Martil":[35.62,-5.27],"Midelt":[32.68,-4.74],"Mohammedia":[33.69,-7.38],"Nador":[35.17,-2.93],"Ouarzazate":[30.92,-6.89],"Oued Zem":[32.86,-6.57],"Safi":[32.3,-9.24],"Salé":[34.04,-6.82],"Settat":[33.0,-7.62],"Sidi Kacem":[34.22,-5.71],"Sidi Slimane":[34.26,-5.93],"Skhirat":[33.85,-7.03],"Smara":[26.74,-11.67],"Tan-Tan":[28.44,-11.1],"Taroudant":[30.47,-8.88],"Taza":[34.21,-4.01],"Témara":[33.93,-6.91],"Tinghir":[31.51,-5.53],"Tiznit":[29.7,-9.73],"Zagora":[30.33,-5.84]};
-/* Searchable city picker: keeps the original <select> (hidden) as the source of truth,
-   so FormData, .value and "change" handlers elsewhere keep working unchanged. */
-const normC=s=>s.normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase().replace(/[^a-z0-9]+/g," ").trim();
-function cityPicker(sel){
- if(!sel||sel._cp)return;sel._cp=1;
- const names=[...sel.options].map(o=>o.value),id="cp"+Math.random().toString(36).slice(2,8);
- const desc=Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype,"value");
- const wrap=document.createElement("div");wrap.className="cp";
- wrap.innerHTML=`<input type="text" role="combobox" aria-label="Ville" aria-expanded="false" aria-controls="${id}" aria-autocomplete="list" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Rechercher une ville…"><ul id="${id}" role="listbox" hidden></ul>`;
- const inp=wrap.firstChild,ul=wrap.lastChild;let shown=[],act=-1,typing=false;
- const sync=()=>{inp.value=desc.get.call(sel)};
- Object.defineProperty(sel,"value",{configurable:true,get(){return desc.get.call(sel)},set(v){desc.set.call(sel,v);sync()}});
- const close=()=>{ul.hidden=true;inp.setAttribute("aria-expanded","false");inp.removeAttribute("aria-activedescendant");act=-1;typing=false};
- const mark=()=>{[...ul.children].forEach((li,i)=>li.classList.toggle("on",i===act));const li=ul.children[act];if(li){inp.setAttribute("aria-activedescendant",li.id);li.scrollIntoView({block:"nearest"})}};
- const draw=()=>{
-  const q=typing?normC(inp.value):"",cur=desc.get.call(sel);
-  shown=names.filter(n=>!q||normC(n).includes(q));
-  if(q)shown.sort((a,b)=>(normC(b).startsWith(q)?1:0)-(normC(a).startsWith(q)?1:0));
-  ul.innerHTML=shown.length?shown.map((c,i)=>`<li role="option" id="${id}-${i}" data-i="${i}" aria-selected="${c===cur}">${esc(c)}</li>`).join(""):`<li class="none" role="presentation">Aucune ville trouvée</li>`;
-  act=shown.length?(q?0:Math.max(0,shown.indexOf(cur))):-1;
-  ul.hidden=false;inp.setAttribute("aria-expanded","true");mark()};
- const choose=c=>{if(c==null)return;const changed=c!==desc.get.call(sel);desc.set.call(sel,c);sync();close();if(changed)sel.dispatchEvent(new Event("change",{bubbles:true}))};
- inp.addEventListener("focus",()=>{typing=false;inp.select();draw()});
- inp.addEventListener("click",()=>{if(ul.hidden){typing=false;draw()}});
- inp.addEventListener("input",()=>{typing=true;draw()});
- inp.addEventListener("keydown",e=>{
-  if(e.key==="ArrowDown"||e.key==="ArrowUp"){e.preventDefault();if(ul.hidden){typing=false;draw();return}if(shown.length){act=(act+(e.key==="ArrowDown"?1:-1)+shown.length)%shown.length;mark()}}
-  else if(e.key==="Enter"){if(!ul.hidden){e.preventDefault();choose(shown[act])}}
-  else if(e.key==="Escape"){if(!ul.hidden){e.preventDefault();sync();close()}}});
- inp.addEventListener("blur",()=>{sync();close()});
- ul.addEventListener("mousedown",e=>e.preventDefault());
- ul.addEventListener("click",e=>{const li=e.target.closest("li[data-i]");if(li)choose(shown[+li.dataset.i])});
- sel.before(wrap);sel.style.display="none";sel.tabIndex=-1;sel.setAttribute("aria-hidden","true");sync()}
+const CITIES={"Casablanca":[33.57,-7.59],"Rabat":[34.02,-6.84],"Salé":[34.04,-6.8],"Témara":[33.93,-6.91],"Skhirat":[33.85,-7.03],"Kénitra":[34.26,-6.58],"Mohammedia":[33.69,-7.38],"Marrakech":[31.63,-8.01],"Fès":[34.03,-5.0],"Meknès":[33.89,-5.55],"Tanger":[35.76,-5.8],"Tétouan":[35.57,-5.37],"Martil":[35.62,-5.27],"M'diq":[35.69,-5.32],"Fnideq":[35.85,-5.36],"Chefchaouen":[35.17,-5.27],"Ouezzane":[34.8,-5.58],"Larache":[35.19,-6.15],"Asilah":[35.47,-6.03],"Ksar El Kébir":[35.0,-5.9],"Agadir":[30.43,-9.6],"Inezgane":[30.36,-9.54],"Aït Melloul":[30.33,-9.5],"Taroudant":[30.47,-8.88],"Tiznit":[29.7,-9.73],"El Jadida":[33.23,-8.5],"Berrechid":[33.27,-7.59],"Settat":[33.0,-7.62],"Khouribga":[32.88,-6.91],"Oued Zem":[32.86,-6.57],"Béni Mellal":[32.34,-6.35],"Fquih Ben Salah":[32.5,-6.69],"Azilal":[31.96,-6.57],"Khénifra":[32.94,-5.67],"Midelt":[32.68,-4.74],"Errachidia":[31.93,-4.43],"Tinghir":[31.51,-5.53],"Ouarzazate":[30.92,-6.91],"Zagora":[30.33,-5.84],"Safi":[32.3,-9.24],"Youssoufia":[32.25,-8.53],"El Kelaâ des Sraghna":[32.05,-7.41],"Essaouira":[31.51,-9.77],"Khémisset":[33.82,-6.07],"Sidi Kacem":[34.22,-5.71],"Sidi Slimane":[34.26,-5.93],"Souk El Arbaa":[34.68,-5.99],"Ifrane":[33.53,-5.11],"Azrou":[33.44,-5.22],"Sefrou":[33.83,-4.83],"Taza":[34.21,-4.01],"Guercif":[34.23,-3.35],"Al Hoceïma":[35.25,-3.94],"Nador":[35.17,-2.93],"Berkane":[34.92,-2.32],"Taourirt":[34.41,-2.9],"Oujda":[34.68,-1.91],"Guelmim":[28.99,-10.06],"Tan-Tan":[28.44,-11.1],"Laâyoune":[27.15,-13.2],"Dakhla":[23.68,-15.96]};
+const CITY_NAMES=Object.keys(CITIES).sort((a,b)=>a.localeCompare(b,"fr"));
 let city={};
 const CATS=["Roman","Science-fiction","Fantasy","Histoire","Biographie","Développement personnel","Jeunesse","Études"];
 const CONDS=["Comme neuf","Bon état","Usé"];
@@ -228,10 +240,36 @@ const ABOUT=`<article class="about">
 <li>Il trouve pour vous la personne qui a le livre que vous cherchez.</li>
 <li>Il privilégie votre ville, pour échanger en main propre ou expédier à moindre coût.</li>
 <li>Il garde les échanges équitables grâce à la valeur estimée de chaque livre.</li>
-<li>Il est pensé pour le Maroc : en français (arabe bientôt), avec les villes marocaines et les prix en dirhams.</li>
+<li>Il est pensé pour le Maroc : en français et en arabe, avec les villes marocaines et les prix en dirhams.</li>
 </ul>
 <p class="ar2" lang="ar" dir="rtl">تبادل الكتب، تبادل المعرفة والعلم</p>
 <button class="btn" data-go="browse">Découvrir les livres</button>
+</article>`;
+const cityList=()=>Object.keys(CITIES).sort((a,b)=>(lang==="ar"?trText(a):a).localeCompare(lang==="ar"?trText(b):b,lang==="ar"?"ar":"fr"));
+const citiesOpts=()=>cityList().map(c=>`<option value="${c}">${c}</option>`).join("");
+function fillCities(){$("#mycity").innerHTML=citiesOpts();if(me&&city[me])$("#mycity").value=city[me]}
+function aboutHtml(){return lang==="ar"?ABOUT_AR:ABOUT}
+const ABOUT_AR=`<article class="about">
+<h2 style="margin-top:0">فكرة «تبادل»</h2>
+<p><strong>«تبادل» موقع مجاني يتبادل فيه القرّاء في المغرب كتبهم</strong> بدل شراء كتب جديدة.</p>
+<p>لدى كل واحد منا كتب قرأها وانتهى منها، ويريد كتبًا جديدة. الكتب مكلفة: يربط «تبادل» بين أشخاص لدى كل منهم ما يبحث عنه الآخر، ليصبح الكتاب الذي أنهيته هو الكتاب القادم الذي ستقرؤه.</p>
+<h2>كيف يعمل؟</h2>
+<ol>
+<li><strong>انشر كتبك</strong> مع صورة وتصنيف وحالة وقيمة تقديرية.</li>
+<li><strong>أضف إلى قائمة أمنياتك</strong> الكتب التي تبحث عنها.</li>
+<li><strong>ابحث وصفِّ</strong> حسب العنوان أو المؤلف أو التصنيف أو الحالة. تظهر أولًا الكتب التي تريدها والقريبة منك.</li>
+<li><strong>اعثر على تطابق:</strong> يكتشف «تبادل» تلقائيًا عندما تملك كتابًا يريده شخص ما ويملك هذا الشخص كتابًا تريده أنت.</li>
+<li><strong>اقترح التبادل.</strong> يقبل المالك أو يرفض. وإذا اختلفت قيمة الكتابين يمكنك إضافة مبلغ لتحقيق التوازن.</li>
+</ol>
+<h2>لماذا «تبادل»؟</h2>
+<ul>
+<li>يجد لك الشخص الذي يملك الكتاب الذي تبحث عنه.</li>
+<li>يمنح الأولوية لمدينتك، لتتبادلوا الكتب يدًا بيد أو تشحنوها بتكلفة أقل.</li>
+<li>يبقي التبادل عادلًا بفضل القيمة التقديرية لكل كتاب.</li>
+<li>صُمّم من أجل المغرب: بالفرنسية والعربية، مع المدن المغربية والأسعار بالدرهم.</li>
+</ul>
+<p class="ar2" lang="ar" dir="rtl">تبادل الكتب، تبادل المعرفة والعلم</p>
+<button class="btn" data-go="browse">اكتشف الكتب</button>
 </article>`;
 const F={q:"",cat:"",cond:""};
 const km=(a,b)=>{const[p,q]=CITIES[a],[r,t]=CITIES[b],R=Math.PI/180,x=Math.sin((r-p)*R/2)**2+Math.cos(p*R)*Math.cos(r*R)*Math.sin((t-q)*R/2)**2;return 12742*Math.asin(Math.sqrt(x))};
@@ -264,26 +302,27 @@ function wishHtml(){
  return myWishes.length?myWishes.map(w=>`<span class="chip">${esc(w.title)}<button data-rm="${w.id}" aria-label="Retirer ${esc(w.title)}">×</button></span>`).join(""):`<p class="empty">Aucune envie pour le moment. Ajoutez un livre que vous aimeriez recevoir.</p>`}
 let view="browse",target=null;
 const $=s=>document.querySelector(s);
-const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const escT=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const esc=s=>"\u2063"+escT(s)+"\u2064";
 const get=id=>books.find(b=>b.id===id);
 const mine=()=>books.filter(b=>b.owner===me);
 function toast(t){const e=$("#toast");e.textContent=t;e.classList.add("show");clearTimeout(toast.t);toast.t=setTimeout(()=>e.classList.remove("show"),2400)}
 function card(b,action){
  const cv=b.hasImg?`<div class="cover ph"><img src="/api/photo/${b.id}" loading="lazy" alt="Couverture de ${esc(b.title)}"></div>`:`<div class="cover" style="--b:${COLORS[b.c%6][0]};--t:${COLORS[b.c%6][1]}"><i></i><div class="mid"><b>${esc(b.title)}</b></div><i>${esc(b.author)}</i></div>`;
  const tt=b.hasImg?`<span>${esc(b.title)}</span>`:"";
- const loc=(!me||b.owner===me)?"":`<small>${esc(city[b.owner])} · ${distLbl(b.owner)}</small>`;
- return `<article class="book"><a class="cl" href="#/livre/${b.id}" data-open="${b.id}" aria-label="Voir l'annonce : ${esc(b.title)}">${cv}</a><div class="info">${tt}${me?`<span class="owner">${avatars[b.owner]?`<img class="av" src="/api/avatar/${encodeURIComponent(b.owner)}" alt="">`:""}${b.owner===me?"Vous":esc(b.owner)}${rt(b.owner)}</span>`:`<span class="owner">Membre à ${esc(b.gcity||"")}</span>`}<small>${esc(b.cat)} · ${esc(b.cond)} · valeur d'environ ${b.value} DH</small>${loc}${action||""}</div></article>`}
+ const loc=(!me||b.owner===me)?"":`<small>${escT(city[b.owner])} · ${distLbl(b.owner)}</small>`;
+ return `<article class="book"><a class="cl" href="#/livre/${b.id}" data-open="${b.id}" aria-label="Voir l'annonce : ${esc(b.title)}">${cv}</a><div class="info">${tt}${me?`<span class="owner">${avatars[b.owner]?`<img class="av" src="/api/avatar/${encodeURIComponent(b.owner)}" alt="">`:""}${b.owner===me?"Vous":esc(b.owner)}${rt(b.owner)}</span>`:`<span class="owner">Membre à ${escT(b.gcity||"")}</span>`}<small>${escT(b.cat)} · ${escT(b.cond)} · valeur d'environ ${b.value} DH</small>${loc}${action||""}</div></article>`}
 const photoSrc=(id,n)=>"/api/photo/"+id+(n?"/"+n:"");
 const avatarSrc=n=>"/api/avatar/"+encodeURIComponent(n);
 function routeHash(){const m=/^#\/livre\/(\d+)$/.exec(location.hash);if(m&&view!=="book"){prevView=view;bookId=+m[1];view="book"}}
 function openBook(id){prevView=view==="book"?prevView:view;bookId=id;view="book";try{history.pushState(null,"","#/livre/"+id)}catch(e){}render();window.scrollTo(0,0)}
 async function shareBook(id){const b=get(id),url=location.origin+"/livre/"+id;
- try{if(navigator.share){await navigator.share({title:b.title+" sur Tabadol",text:"Je propose ce livre à l'échange sur Tabadol",url});return}}catch(e){return}
+ try{if(navigator.share){await navigator.share({title:b.title+trText(" sur Tabadol"),text:trText("Je propose ce livre à l'échange sur Tabadol"),url});return}}catch(e){return}
  try{await navigator.clipboard.writeText(url);toast("Lien copié")}catch(e){$("#bpextra").innerHTML=`<label style="margin-top:10px">Copiez le lien<input readonly value="${url}" onclick="this.select()"></label>`}}
 async function showPublic(){const m=/^#\/livre\/(\d+)$/.exec(location.hash);if(!m)return;
  const b=await api("/api/book/"+m[1]);if(b.error)return;
  const box=document.createElement("div");box.className="about authbox";
- box.innerHTML=`<h2 style="margin-top:0">${esc(b.title)}</h2><p class="sub" style="margin:0 0 8px">${esc(b.author)} · ${esc(b.cat)} · ${esc(b.cond)} · valeur d'environ ${b.value} DH · membre à ${esc(b.city)}</p>${b.photos?`<img class="bigph" src="${photoSrc(b.id,0)}" alt="">`:""}${b.description?`<p class="bp-desc">${esc(b.description)}</p>`:""}<p><strong>Connectez-vous ou créez un compte gratuit pour proposer un échange.</strong></p>`;
+ box.innerHTML=`<h2 style="margin-top:0">${esc(b.title)}</h2><p class="sub" style="margin:0 0 8px">${esc(b.author)} · ${escT(b.cat)} · ${escT(b.cond)} · valeur d'environ ${b.value} DH · membre à ${escT(b.city)}</p>${b.photos?`<img class="bigph" src="${photoSrc(b.id,0)}" alt="">`:""}${b.description?`<p class="bp-desc">${esc(b.description)}</p>`:""}<p><strong>Connectez-vous ou créez un compte gratuit pour proposer un échange.</strong></p>`;
  $("#view").prepend(box)}
 function bookPage(id){
  const b=get(id);
@@ -296,10 +335,10 @@ function bookPage(id){
  return `<p style="margin:0 0 12px"><button class="btn alt" data-back="1" style="margin:0">← Retour</button></p>
  <article class="bookpage"><div class="bp-media">${cover}${thumbs}</div><div class="bp-info">
   ${tag}<h2 style="margin:6px 0 2px">${esc(b.title)}</h2>
-  <p class="sub" style="margin:0 0 10px">${esc(b.author)} · ${esc(b.cat)}</p>
-  <p style="margin:0 0 10px"><strong>${esc(b.cond)}</strong> · valeur d'environ <strong>${b.value} DH</strong></p>
+  <p class="sub" style="margin:0 0 10px">${esc(b.author)} · ${escT(b.cat)}</p>
+  <p style="margin:0 0 10px"><strong>${escT(b.cond)}</strong> · valeur d'environ <strong>${b.value} DH</strong></p>
   ${b.description?`<p class="bp-desc">${esc(b.description)}</p>`:""}
-  <div class="row" style="margin:0 0 12px"><span class="owner">${avatars[b.owner]?`<img class="av" src="${avatarSrc(b.owner)}" alt="">`:""}${mineB?"Vous (c'est votre annonce)":esc(b.owner)}${rt(b.owner)}</span><br><small>${esc(city[b.owner]||"")}${mineB?"":" · "+distLbl(b.owner)}</small></div>
+  <div class="row" style="margin:0 0 12px"><span class="owner">${avatars[b.owner]?`<img class="av" src="${avatarSrc(b.owner)}" alt="">`:""}${mineB?"Vous (c'est votre annonce)":esc(b.owner)}${rt(b.owner)}</span><br><small>${escT(city[b.owner]||"")}${mineB?"":" · "+distLbl(b.owner)}</small></div>
   <div class="acts" style="flex-wrap:wrap">${mineB?delBtn(b):`<button class="btn" data-want="${b.id}">Échanger contre ce livre</button>`}<button class="btn alt" data-share="${b.id}">Partager</button>${mineB?"":`<button class="btn alt" data-repbook="${b.id}">Signaler</button>`}</div>
   <div id="bpextra"></div></div></article>
  ${others.length?`<h2>Autres livres de ${mineB?"votre étagère":esc(b.owner)}</h2><div class="grid">${others.map(x=>card(x)).join("")}</div>`:""}`}
@@ -317,10 +356,10 @@ function guestBook(id){
  return `<p style="margin:0 0 12px"><button class="btn alt" data-back="1" style="margin:0">← Retour</button></p>
  <article class="bookpage"><div class="bp-media">${cover}${thumbs}</div><div class="bp-info">
   <h2 style="margin:6px 0 2px">${esc(b.title)}</h2>
-  <p class="sub" style="margin:0 0 10px">${esc(b.author)} · ${esc(b.cat)}</p>
-  <p style="margin:0 0 10px"><strong>${esc(b.cond)}</strong> · valeur d'environ <strong>${b.value} DH</strong></p>
+  <p class="sub" style="margin:0 0 10px">${esc(b.author)} · ${escT(b.cat)}</p>
+  <p style="margin:0 0 10px"><strong>${escT(b.cond)}</strong> · valeur d'environ <strong>${b.value} DH</strong></p>
   ${b.description?`<p class="bp-desc">${esc(b.description)}</p>`:""}
-  <div class="row" style="margin:0 0 12px"><span class="owner">Membre à ${esc(b.gcity||"")}</span></div>
+  <div class="row" style="margin:0 0 12px"><span class="owner">Membre à ${escT(b.gcity||"")}</span></div>
   <div class="acts" style="flex-wrap:wrap"><button class="btn" data-gv="signup">Échanger contre ce livre</button><button class="btn alt" data-share="${b.id}">Partager</button><button class="btn alt" data-gv="signup">Signaler</button></div>
   <p class="sub" style="margin-top:12px">Inscrivez-vous gratuitement pour proposer cet échange.</p>
   <div id="bpextra"></div></div></article>`}
@@ -331,10 +370,10 @@ function guestRender(){
  const t=(v,l)=>`<button class="tab" data-gv="${v}" aria-selected="${cur===v}">${l}</button>`;
  const nav=`<div class="seg">${t("browse","Parcourir")}${t("about","À propos")}<button class="tab" data-gv="login">Connexion</button><button class="tab" data-gv="signup" style="background:var(--accent);color:var(--on-accent)">Inscription</button></div>`;
  const v=$("#view");
- if(view==="about"){v.innerHTML=nav+ABOUT.replace(/<button[\s\S]*?<\/button>/,"");return}
+ if(view==="about"){v.innerHTML=nav+aboutHtml().replace(/<button[\s\S]*?<\/button>/,"");return}
  if(view==="book"){v.innerHTML=nav+guestBook(bookId);return}
  v.innerHTML=nav+`<p class="guestbar"><strong>Créez un compte gratuit</strong> pour publier vos livres et proposer des échanges. <button class="linkbtn" data-gv="signup">S'inscrire</button></p>
- <div class="filters"><input type="search" id="q" placeholder="Rechercher un titre ou un auteur" aria-label="Rechercher un livre"><select id="fc" aria-label="Catégorie"><option value="">Toutes les catégories</option>${CATS.map(c=>`<option>${c}</option>`).join("")}</select><select id="fs" aria-label="État du livre (occasion)"><option value="">Tous les états</option>${CONDS.map(c=>`<option>${c}</option>`).join("")}</select></div><div id="res"></div>`;
+ <div class="filters"><input type="search" id="q" placeholder="Rechercher un titre ou un auteur" aria-label="Rechercher un livre"><select id="fc" aria-label="Catégorie"><option value="">Toutes les catégories</option>${CATS.map(c=>`<option value="${c}">${c}</option>`).join("")}</select><select id="fs" aria-label="État du livre (occasion)"><option value="">Tous les états</option>${CONDS.map(c=>`<option value="${c}">${c}</option>`).join("")}</select></div><div id="res"></div>`;
  $("#q").value=F.q;$("#fc").value=F.cat;$("#fs").value=F.cond;
  $("#q").oninput=e=>{F.q=e.target.value;drawGuest()};$("#fc").onchange=e=>{F.cat=e.target.value;drawGuest()};$("#fs").onchange=e=>{F.cond=e.target.value;drawGuest()};
  drawGuest()}
@@ -349,7 +388,7 @@ async function pollChat(){
  if(!chatId)return;
  const d=await api(`/api/requests/${chatId}/messages?after=${chatLast}`);if(d.error||!d.messages)return;
  const box=$("#cmsgs");
- d.messages.forEach(m=>{chatLast=Math.max(chatLast,m.id);const el=document.createElement("div");el.className="msg"+(m.mine?" me":"")+(m.kind==="meet"?" meet":"");el.textContent=m.body;box.appendChild(el)});
+ d.messages.forEach(m=>{chatLast=Math.max(chatLast,m.id);const el=document.createElement("div");el.className="msg"+(m.mine?" me":"")+(m.kind==="meet"?" meet":"");el.translate=false;el.textContent=m.body;box.appendChild(el)});
  if(d.messages.length)box.scrollTop=box.scrollHeight;
  $("#cf").style.display=d.open?"flex":"none"}
 function closeChat(){clearInterval(chatTimer);chatId=null;if($("#cdlg").open)$("#cdlg").close();boot()}
@@ -360,8 +399,8 @@ $("#cf").onsubmit=async e=>{e.preventDefault();const t=$("#cin").value.trim();if
 $("#cmeet").onclick=()=>{
  $("#cextra").innerHTML=`<div class="add" style="grid-template-columns:1fr;margin:10px 0 0"><label>Lieu public<input id="mp" maxlength="80" placeholder="Café, bibliothèque, gare…"></label><label>Date et heure<input id="md" type="datetime-local"></label><button class="btn" id="mok" type="button">Envoyer la proposition</button></div>`;
  $("#mok").onclick=async()=>{const p=$("#mp").value.trim(),d=$("#md").value;if(!p||!d){toast("Indiquez un lieu et une date");return}
-  const dt=new Date(d).toLocaleString("fr-FR",{weekday:"long",day:"numeric",month:"long",hour:"2-digit",minute:"2-digit"});
-  const r=await api(`/api/requests/${chatId}/messages`,"POST",{body:`Rendez-vous proposé : ${p}, le ${dt}. Répondez pour confirmer.`,kind:"meet"});
+  const dt=new Date(d).toLocaleString(lang==="ar"?"ar-MA-u-nu-latn":"fr-FR",{weekday:"long",day:"numeric",month:"long",hour:"2-digit",minute:"2-digit"});
+  const r=await api(`/api/requests/${chatId}/messages`,"POST",{body:lang==="ar"?`موعد مقترح: ${p}، ${dt}. أجب للتأكيد.`:`Rendez-vous proposé : ${p}, le ${dt}. Répondez pour confirmer.`,kind:"meet"});
   if(r.error)toast(r.error);$("#cextra").innerHTML="";pollChat()}};
 $("#crep").onclick=()=>{
  $("#cextra").innerHTML=`<div class="add" style="grid-template-columns:1fr;margin:10px 0 0"><label>Que s'est-il passé ?<input id="rr" maxlength="300"></label><button class="btn" id="rok" type="button">Envoyer le signalement</button></div>`;
@@ -402,12 +441,11 @@ function renderAuth(mode){
  ${su?`<label>Nom d'utilisateur<input name="name" required minlength="2" maxlength="30" autocomplete="username"></label>`:""}
  <label>E-mail<input name="email" type="email" required autocomplete="email"></label>
  <label>Mot de passe${su?" (8 caractères minimum)":""}<input name="password" type="password" required minlength="8" autocomplete="${su?"new-password":"current-password"}"></label>
- ${su?`<label>Ville<select name="city">${Object.keys(CITIES).map(c=>`<option>${c}</option>`).join("")}</select></label>
+ ${su?`<label>Ville<select name="city">${citiesOpts()}</select></label>
  <label>Téléphone (facultatif)<input name="phone" type="tel" autocomplete="tel"></label>
  <label>Photo de profil ou logo (facultatif)<input name="avatar" type="file" accept="image/*"></label>`:""}
  <p class="err" id="aerr" role="alert"></p>
- <button class="btn" type="submit">${su?"Créer mon compte":"Se connecter"}</button></form></div>`+ABOUT.replace(/<button[\s\S]*?<\/button>/,"");
- if(su)cityPicker($("#af [name=city]"));
+ <button class="btn" type="submit">${su?"Créer mon compte":"Se connecter"}</button></form></div>`+aboutHtml().replace(/<button[\s\S]*?<\/button>/,"");
  $("#af").onsubmit=e=>{e.preventDefault();const f=new FormData(e.target),body=Object.fromEntries([...f].filter(([k])=>k!=="avatar"));
   const go=async avatar=>{const r=await api(su?"/api/signup":"/api/login","POST",{...body,avatar});if(r.error){$("#aerr").textContent=r.error;return}await boot()};
   const file=f.get("avatar");file&&file.size?shrink(file,go,200):go("")};
@@ -426,23 +464,23 @@ function render(){
  M.forEach(x=>{const k=x.theirs.id+"-"+x.my.id;if(!seen.has(k)){seen.add(k);if(ready)setTimeout(()=>toast(`Nouvelle correspondance avec ${x.u} !`),50)}});
  ready=true;
  if(view==="browse"){
-  v.innerHTML=`<div class="filters"><input type="search" id="q" placeholder="Rechercher un titre ou un auteur" aria-label="Rechercher un livre"><select id="fc" aria-label="Catégorie"><option value="">Toutes les catégories</option>${CATS.map(c=>`<option>${c}</option>`).join("")}</select><select id="fs" aria-label="État du livre (occasion)"><option value="">Tous les états</option>${CONDS.map(c=>`<option>${c}</option>`).join("")}</select></div><p class="sub">Les livres que vous cherchez, dont le propriétaire veut un des vôtres, dans votre ville ou à proximité, apparaissent en premier.</p><div id="res"></div>`;
+  v.innerHTML=`<div class="filters"><input type="search" id="q" placeholder="Rechercher un titre ou un auteur" aria-label="Rechercher un livre"><select id="fc" aria-label="Catégorie"><option value="">Toutes les catégories</option>${CATS.map(c=>`<option value="${c}">${c}</option>`).join("")}</select><select id="fs" aria-label="État du livre (occasion)"><option value="">Tous les états</option>${CONDS.map(c=>`<option value="${c}">${c}</option>`).join("")}</select></div><p class="sub">Les livres que vous cherchez, dont le propriétaire veut un des vôtres, dans votre ville ou à proximité, apparaissent en premier.</p><div id="res"></div>`;
   $("#q").value=F.q;$("#fc").value=F.cat;$("#fs").value=F.cond;
   $("#q").oninput=e=>{F.q=e.target.value;drawRes()};$("#fc").onchange=e=>{F.cat=e.target.value;drawRes()};$("#fs").onchange=e=>{F.cond=e.target.value;drawRes()};
   drawRes();
  }else if(view==="matches"){
   v.innerHTML=`<p style="margin-top:0">Tabadol compare toutes les étagères et listes d'envies. Une correspondance apparaît quand vous possédez un livre que quelqu'un veut et que cette personne possède un livre que vous voulez.</p>`+
-  (M.length?M.map(x=>{const s=pend(x);return `<div class="row match"><p><strong>Correspondance avec ${esc(x.u)}</strong> <small>(${esc(city[x.u])}, ${distLbl(x.u)})</small><br>Vous donnez « ${esc(x.my.title)} » (${x.my.value} DH) et recevez « ${esc(x.theirs.title)} » (${x.theirs.value} DH).</p>${s?`<span class="status wait">${s}</span>`:`<button class="btn" data-prop="${x.theirs.id}-${x.my.id}">Proposer cet échange</button>`}</div>`}).join(""):`<p class="empty">Aucune correspondance pour l'instant. Ajoutez des livres souhaités à votre liste d'envies dans Mon étagère.</p>`);
+  (M.length?M.map(x=>{const s=pend(x);return `<div class="row match"><p><strong>Correspondance avec ${esc(x.u)}</strong> <small>(${escT(city[x.u])}, ${distLbl(x.u)})</small><br>Vous donnez « ${esc(x.my.title)} » (${x.my.value} DH) et recevez « ${esc(x.theirs.title)} » (${x.theirs.value} DH).</p>${s?`<span class="status wait">${s}</span>`:`<button class="btn" data-prop="${x.theirs.id}-${x.my.id}">Proposer cet échange</button>`}</div>`}).join(""):`<p class="empty">Aucune correspondance pour l'instant. Ajoutez des livres souhaités à votre liste d'envies dans Mon étagère.</p>`);
  }else if(view==="book"){
   v.innerHTML=bookPage(bookId);
  }else if(view==="about"){
-  v.innerHTML=ABOUT;
+  v.innerHTML=aboutHtml();
  }else if(view==="shelf"){
   v.innerHTML=`<form class="add" id="addf"><label class="full">Titre<input name="t" required></label>
   <label>Auteur<input name="a" required></label>
   <label>Valeur estimée (DH)<input name="v" type="number" min="5" step="5" value="80" required></label>
-  <label>État<select name="c"><option>Comme neuf</option><option selected>Bon état</option><option>Usé</option></select></label>
-  <label>Catégorie<select name="k">${CATS.map(c=>`<option>${c}</option>`).join("")}</select></label><label class="full">Description (facultatif)<textarea name="d" maxlength="500" rows="3" placeholder="État, édition, pages jaunies…"></textarea></label><label class="full">Photos (jusqu'à 3)<input name="p" type="file" accept="image/*" multiple></label><button class="btn full" type="submit">Ajouter à mon étagère</button></form>
+  <label>État<select name="c"><option value="Comme neuf">Comme neuf</option><option value="Bon état" selected>Bon état</option><option value="Usé">Usé</option></select></label>
+  <label>Catégorie<select name="k">${CATS.map(c=>`<option value="${c}">${c}</option>`).join("")}</select></label><label class="full">Description (facultatif)<textarea name="d" maxlength="500" rows="3" placeholder="État, édition, pages jaunies…"></textarea></label><label class="full">Photos (jusqu'à 3)<input name="p" type="file" accept="image/*" multiple></label><button class="btn full" type="submit">Ajouter à mon étagère</button></form>
   ${mine().length?`<div class="grid">${mine().map(b=>card(b,delBtn(b))).join("")}</div>`:`<p class="empty">Votre étagère est vide. Ajoutez un livre ci-dessus pour commencer à échanger.</p>`}
   <h2>Ma liste d'envies</h2>
   <p class="sub">Votre liste est privée : personne ne la voit. Tabadol l'utilise seulement pour trouver des correspondances.</p>
@@ -464,16 +502,16 @@ function render(){
   const fin=reqs.filter(r=>["done","declined","cancelled"].includes(r.status));
   const other=r=>r.from===me?r.to:r.from;
   const goingRow=r=>{const mineOk=r.from===me?r.fromOk:r.toOk;
-   return `<div class="row ok"><p>${line(r)}<br><small>Avec ${esc(other(r))} (${esc(city[other(r)]||"")})</small></p>
+   return `<div class="row ok"><p>${line(r)}<br><small>Avec ${esc(other(r))} (${escT(city[other(r)]||"")})</small></p>
    <div class="acts" style="flex-wrap:wrap"><button class="btn" data-chat="${r.id}">Ouvrir le chat${r.unread?` <span class="badge">${r.unread}</span>`:""}</button>
    ${mineOk?`<span class="status wait">Vous avez confirmé. En attente de ${esc(other(r))}.</span>`:`<button class="btn alt" data-conf="${r.id}">Échange effectué</button>`}
    <button class="btn alt" data-can="${r.id}">Annuler l'échange</button></div></div>`};
-  const finRow=r=>{const st=r.status==="done"?`<span class="status ok">Échangé</span>${r.iRated?` <span class="status wait">Noté</span>`:Date.now()-r.doneAt<14*864e5?` <button class="btn alt" data-rate="${r.id}" style="margin-left:8px">Noter ${esc(other(r))}</button>`:""}${Date.now()-r.doneAt<7*864e5?` <button class="btn alt" data-chat="${r.id}" style="margin-left:8px">Chat</button>`:""}`:`<span class="status no">${r.status==="declined"?"Refusé":"Annulée"}</span>`;
+  const finRow=r=>{const st=r.status==="done"?`<span class="status ok">Échangé</span>${r.iRated?` <span class="status wait">Noté</span>`:Date.now()-r.doneAt<14*864e5?` <button class="btn alt" data-rate="${r.id}" style="margin-inline-start:8px">Noter ${esc(other(r))}</button>`:""}${Date.now()-r.doneAt<7*864e5?` <button class="btn alt" data-chat="${r.id}" style="margin-inline-start:8px">Chat</button>`:""}`:`<span class="status no">${r.status==="declined"?"Refusé":"Annulée"}</span>`;
    return `<div class="row"><p>${line(r)}</p>${st}</div>`};
   v.innerHTML=`<h2 style="margin-top:0">En attente de votre réponse</h2>`+
    (inc.length?inc.map(r=>`<div class="row"><p>${line(r)}</p><div class="acts"><button class="btn" data-acc="${r.id}">Accepter</button><button class="btn alt" data-dec="${r.id}" style="margin-top:auto">Refuser</button></div></div>`).join(""):`<p class="empty">Aucune demande pour le moment.</p>`)+
    (going.length?`<h2>Échanges en cours</h2><p class="sub">Discutez dans le chat, retrouvez-vous dans un lieu public, puis confirmez tous les deux. Les livres changent de propriétaire seulement après les deux confirmations.</p>`+going.map(goingRow).join(""):"")+
-   `<h2>Envoyées par vous</h2>`+(sent.length?sent.map(r=>`<div class="row"><p>${line(r)}</p><span class="status wait">En attente de ${esc(r.to)}</span> <button class="btn alt" data-can="${r.id}" style="margin-left:8px">Annuler</button></div>`).join(""):`<p class="empty">Rien d'envoyé pour l'instant. Trouvez un livre dans Parcourir.</p>`)+
+   `<h2>Envoyées par vous</h2>`+(sent.length?sent.map(r=>`<div class="row"><p>${line(r)}</p><span class="status wait">En attente de ${esc(r.to)}</span> <button class="btn alt" data-can="${r.id}" style="margin-inline-start:8px">Annuler</button></div>`).join(""):`<p class="empty">Rien d'envoyé pour l'instant. Trouvez un livre dans Parcourir.</p>`)+
    (fin.length?`<h2>Terminées</h2>`+fin.map(finRow).join(""):"");
  }
 }
@@ -530,11 +568,12 @@ $("#send").onclick=async()=>{
  $("#dlg").close();if(r.error){toast(r.error);return}
  toast(`Demande envoyée à ${get(target).owner}`);view="reqs";await boot();
 };
-$("#mycity").innerHTML=Object.keys(CITIES).map(c=>`<option>${c}</option>`).join("");
-cityPicker($("#mycity"));
+$("#mycity").innerHTML=citiesOpts();
 $("#mycity").onchange=async e=>{await api("/api/me","PATCH",{city:e.target.value});await boot()};
 $("#who").onclick=async e=>{if(e.target.closest("[data-out]")){await api("/api/logout","POST");me=null;await boot()}};
 window.addEventListener("popstate",()=>{if(view==="book"&&!/^#\/livre\//.test(location.hash))view=prevView;render()});
+$("#langbtn").onclick=()=>setLang(lang==="ar"?"fr":"ar");
+applyLang();
 boot();
 setInterval(async()=>{if(!me||document.hidden||chatId)return;const r=await api("/api/unread");if(r.error)return;unreadTotal=r.unread;const n=r.pending+r.unread;$("#badge").hidden=!n;$("#badge").textContent=n},20000);
 </script>
