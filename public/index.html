@@ -165,9 +165,58 @@ dialog::backdrop{background:rgba(24,30,24,.55)}
 <div id="toast" role="status"></div>
 
 <script>
+// PREVIEW ONLY: an in-memory fake server so sign-up, chat, meeting confirmation and ratings can be tried without Cloudflare.
+(()=>{
+const U=[{name:"Demo",email:"demo@tabadol.ma",pw:"demo1234",city:"Casablanca"},{name:"Rafael",city:"Fès"},{name:"Sam",city:"Casablanca"},{name:"Lena",city:"Marrakech"},{name:"Omar",city:"Tanger"}];
+const bk=(id,o,title,author,cat,cond,value)=>({id,o,title,author,cat,cond,value});
+let B=[bk(1,"Demo","Sapiens","Yuval Noah Harari","Histoire","Bon état",90),bk(2,"Demo","Atomic Habits","James Clear","Développement personnel","Comme neuf",80),bk(3,"Rafael","Dune","Frank Herbert","Science-fiction","Bon état",100),bk(4,"Sam","Project Hail Mary","Andy Weir","Science-fiction","Comme neuf",120),bk(5,"Sam","Norwegian Wood","Haruki Murakami","Roman","Usé",60),bk(6,"Omar","The Hobbit","J.R.R. Tolkien","Fantasy","Bon état",70),bk(7,"Demo","Educated","Tara Westover","Biographie","Bon état",90),bk(8,"Lena","The Alchemist","Paulo Coelho","Roman","Bon état",70)];
+let W=[["Demo","Dune"],["Demo","Project Hail Mary"],["Rafael","Atomic Habits"],["Sam","Sapiens"],["Lena","Atomic Habits"],["Omar","Dune"]].map(([u,title],i)=>({id:i+1,u,title}));
+const rq=(id,from,to,want,offer,money,status,x)=>({id,from,to,want,offer,money,status,fromOk:0,toOk:0,doneAt:null,...x});
+let R=[rq(1,"Sam","Demo",1,5,30,"pending"),rq(2,"Demo","Rafael",3,2,0,"accepted"),rq(3,"Demo","Lena",7,8,0,"done",{fromOk:1,toOk:1,doneAt:Date.now()-864e5})];
+let MS=[{id:1,req:2,from:"Rafael",body:"Bonjour ! On se retrouve samedi pour l'échange ?",kind:"text"}],RD={},RT=[];
+let STAT={Rafael:{avg:4.8,n:5},Sam:{avg:4.5,n:2},Lena:{avg:5,n:3}},n=100,cur=null;
+const nz=s=>String(s).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-z0-9 ]/g," ").replace(/\b(the|a|an|le|la)\b/g," ").replace(/\s+/g," ").trim();
+const hit=(t,b)=>{const w=nz(t),f=nz(b.title);return w.length>2&&(f.includes(w)||w.includes(f)||nz(b.author).includes(w))};
+const mm=()=>{const out=[];[...new Set(B.map(b=>b.o))].filter(u=>u!==cur).forEach(u=>B.filter(b=>b.o===u&&W.some(w=>w.u===cur&&hit(w.title,b))).forEach(t=>B.filter(b=>b.o===cur&&W.some(w=>w.u===u&&hit(w.title,b))).forEach(m2=>out.push({user:u,theirs:t.id,mine:m2.id}))));return out};
+const DESC={3:"Édition de poche, quelques pages jaunies. Parfait pour une première lecture.",4:"Comme neuf, lu une seule fois. Couverture rigide.",5:"Un peu usé mais complet. Couverture pliée.",6:"Belle édition illustrée, très bien conservée.",8:"Édition de poche, lisible et propre."};
+const real=window.fetch,J=x=>new Response(JSON.stringify(x),{headers:{"content-type":"application/json"}}),X=e=>J({error:e});
+window.fetch=async(url,o={})=>{
+ if(!String(url).startsWith("/api/"))return real(url,o);
+ const L=new URL(url,"https://x"),[,,a,b,c]=L.pathname.split("/"),m=o.method||"GET",d=o.body?JSON.parse(o.body):{},me=U.find(u=>u.name===cur);
+ if(a==="signup"){if(U.some(u=>u.name.toLowerCase()===String(d.name).toLowerCase()||u.email===d.email))return X("Ce nom d'utilisateur ou cet e-mail est déjà utilisé.");if(String(d.password).length<8)return X("Mot de passe : 8 caractères minimum.");U.push({name:d.name.trim(),email:d.email,pw:d.password,city:d.city,avatar:d.avatar||""});cur=d.name.trim();return J({ok:true})}
+ if(a==="login"){const u=U.find(u=>u.email===d.email&&u.pw===d.password);if(!u)return X("E-mail ou mot de passe incorrect.");cur=u.name;return J({ok:true})}
+ if(a==="logout"){cur=null;return J({ok:true})}
+ if(a==="public")return J({books:B.map(b=>({id:b.id,title:b.title,author:b.author,cat:b.cat,cond:b.cond,value:b.value,description:b.description||DESC[b.id]||"",hasImg:b.img?1:0,extra:(b.imgs||[]).length,city:U.find(u=>u.name===b.o).city}))});
+ if(!me)return a==="state"?J({me:null}):X("Connectez-vous d'abord.");
+ const unread=r=>MS.filter(x=>x.req===r.id&&x.from!==cur&&x.id>(RD[r.id+":"+cur]||0)).length,mine=R.filter(r=>r.from===cur||r.to===cur);
+ if(a==="state")return J({me:{name:me.name,city:me.city},users:U.map(u=>({name:u.name,city:u.city,av:u.avatar?1:0})),books:B.map(b=>({id:b.id,title:b.title,author:b.author,cat:b.cat,cond:b.cond,value:b.value,hasImg:b.img?1:0,description:b.description||DESC[b.id]||"",extra:(b.imgs||[]).length,owner:b.o})),wishes:W.filter(w=>w.u===cur).map(w=>({id:w.id,title:w.title})),matches:mm(),requests:mine.map(r=>({id:r.id,fromName:r.from,toName:r.to,want:r.want,offer:r.offer,money:r.money,status:r.status,fromOk:r.fromOk,toOk:r.toOk,doneAt:r.doneAt,unread:unread(r),iRated:RT.some(x=>x.req===r.id&&x.by===cur)})),ratings:Object.entries(STAT).map(([name,v])=>({name,avg:v.avg,n:v.n})),swaps:[]});
+ if(a==="unread")return J({pending:R.filter(r=>r.to===cur&&r.status==="pending").length,unread:mine.reduce((s,r)=>s+unread(r),0)});
+ if(a==="me")me.city=d.city;
+ if(a==="report")return J({ok:true});
+ if(a==="books"&&m==="DELETE"){const id=+b,bk2=B.find(x=>x.id===id);if(!bk2||bk2.o!==cur)return X("Livre introuvable.");if(R.some(r=>r.status==="accepted"&&(r.want===id||r.offer===id)))return X("Ce livre est réservé par un échange en cours.");B=B.filter(x=>x.id!==id);R=R.filter(r=>!(r.status==="pending"&&(r.want===id||r.offer===id)));return J({ok:true})}
+ if(a==="books"&&m==="POST")B.unshift({id:++n,o:cur,title:d.title,author:d.author,cat:d.cat,cond:d.cond,value:d.value,img:d.img,description:d.description,imgs:d.imgs||[]});
+ if(a==="wishes"&&m==="POST")W.push({id:++n,u:cur,title:d.title});
+ if(a==="wishes"&&m==="DELETE")W=W.filter(w=>w.id!==+b);
+ if(a==="requests"&&!b)R.unshift(rq(++n,cur,B.find(x=>x.id===+d.want).o,+d.want,+d.offer,d.money||0,"pending"));
+ if(a==="requests"&&b&&c==="messages"){const r=R.find(x=>x.id===+b);if(!r)return X("Discussion introuvable.");
+  if(m==="POST"){MS.push({id:++n,req:r.id,from:cur,body:d.body,kind:d.kind||"text"});return J({ok:true})}
+  const after=+L.searchParams.get("after")||0,rows=MS.filter(x=>x.req===r.id&&x.id>after);
+  if(rows.length)RD[r.id+":"+cur]=rows[rows.length-1].id;
+  return J({open:r.status==="accepted"||r.status==="done",messages:rows.map(x=>({id:x.id,mine:x.from===cur,body:x.body,kind:x.kind,at:0}))})}
+ if(a==="requests"&&b&&c==="rate"){const r=R.find(x=>x.id===+b),o2=r.from===cur?r.to:r.from,s=STAT[o2]||{avg:0,n:0};RT.push({req:r.id,by:cur});STAT[o2]={n:s.n+1,avg:Math.round((s.avg*s.n+d.stars)/(s.n+1)*10)/10};return J({ok:true})}
+ if(a==="requests"&&b){const r=R.find(x=>x.id===+b);if(!r)return X("Demande introuvable.");
+  if(c==="decline")r.status="declined";
+  else if(c==="cancel")r.status="cancelled";
+  else if(c==="accept"){r.status="accepted";R.forEach(x=>{if(x!==r&&x.status==="pending"&&[r.want,r.offer].some(i=>i===x.want||i===x.offer))x.status="cancelled"})}
+  else if(c==="confirm"){if(r.from===cur)r.fromOk=1;else r.toOk=1;
+   if(r.fromOk&&r.toOk){B.find(x=>x.id===r.want).o=r.from;B.find(x=>x.id===r.offer).o=r.to;r.status="done";r.doneAt=Date.now();return J({ok:true,done:true})}}}
+ return J({ok:true})};
+window.PV={photo:(id,n)=>{const b=B.find(x=>x.id===id);return n?(b?.imgs||[])[n-1]||"":b?.img||""},avatar:nm=>U.find(u=>u.name===nm)?.avatar||""};
+})();
 const COLORS=[["#0f5c4d","#fff"],["#7a1f2b","#fff"],["#c8962e","#1f2a24"],["#5b6b2e","#fff"],["#5e2a5a","#fff"],["#1b5e6b","#fff"]];
 let me=null,myWishes=[],avatars={},authMode="login",rat={},swp={},unreadTotal=0,chatId=null,chatLast=0,chatTimer=null,rateId=null,rateStars=0,delAsk=null,bookId=null,prevView="browse";
-const CITIES={"Casablanca":[33.57,-7.59],"Rabat":[34.02,-6.84],"Kénitra":[34.26,-6.58],"Marrakech":[31.63,-8.01],"Fès":[34.03,-5.0],"Meknès":[33.89,-5.55],"Tanger":[35.76,-5.8],"Tétouan":[35.57,-5.37],"Agadir":[30.43,-9.6],"El Jadida":[33.23,-8.5],"Oujda":[34.68,-1.91]};
+const CITIES={"Casablanca":[33.57,-7.59],"Rabat":[34.02,-6.84],"Salé":[34.04,-6.8],"Témara":[33.93,-6.91],"Skhirat":[33.85,-7.03],"Kénitra":[34.26,-6.58],"Mohammedia":[33.69,-7.38],"Marrakech":[31.63,-8.01],"Fès":[34.03,-5.0],"Meknès":[33.89,-5.55],"Tanger":[35.76,-5.8],"Tétouan":[35.57,-5.37],"Martil":[35.62,-5.27],"M'diq":[35.69,-5.32],"Fnideq":[35.85,-5.36],"Chefchaouen":[35.17,-5.27],"Ouezzane":[34.8,-5.58],"Larache":[35.19,-6.15],"Asilah":[35.47,-6.03],"Ksar El Kébir":[35.0,-5.9],"Agadir":[30.43,-9.6],"Inezgane":[30.36,-9.54],"Aït Melloul":[30.33,-9.5],"Taroudant":[30.47,-8.88],"Tiznit":[29.7,-9.73],"El Jadida":[33.23,-8.5],"Berrechid":[33.27,-7.59],"Settat":[33.0,-7.62],"Khouribga":[32.88,-6.91],"Oued Zem":[32.86,-6.57],"Béni Mellal":[32.34,-6.35],"Fquih Ben Salah":[32.5,-6.69],"Azilal":[31.96,-6.57],"Khénifra":[32.94,-5.67],"Midelt":[32.68,-4.74],"Errachidia":[31.93,-4.43],"Tinghir":[31.51,-5.53],"Ouarzazate":[30.92,-6.91],"Zagora":[30.33,-5.84],"Safi":[32.3,-9.24],"Youssoufia":[32.25,-8.53],"El Kelaâ des Sraghna":[32.05,-7.41],"Essaouira":[31.51,-9.77],"Khémisset":[33.82,-6.07],"Sidi Kacem":[34.22,-5.71],"Sidi Slimane":[34.26,-5.93],"Souk El Arbaa":[34.68,-5.99],"Ifrane":[33.53,-5.11],"Azrou":[33.44,-5.22],"Sefrou":[33.83,-4.83],"Taza":[34.21,-4.01],"Guercif":[34.23,-3.35],"Al Hoceïma":[35.25,-3.94],"Nador":[35.17,-2.93],"Berkane":[34.92,-2.32],"Taourirt":[34.41,-2.9],"Oujda":[34.68,-1.91],"Guelmim":[28.99,-10.06],"Tan-Tan":[28.44,-11.1],"Laâyoune":[27.15,-13.2],"Dakhla":[23.68,-15.96]};
+const CITY_NAMES=Object.keys(CITIES).sort((a,b)=>a.localeCompare(b,"fr"));
 let city={};
 const CATS=["Roman","Science-fiction","Fantasy","Histoire","Biographie","Développement personnel","Jeunesse","Études"];
 const CONDS=["Comme neuf","Bon état","Usé"];
@@ -229,12 +278,12 @@ const get=id=>books.find(b=>b.id===id);
 const mine=()=>books.filter(b=>b.owner===me);
 function toast(t){const e=$("#toast");e.textContent=t;e.classList.add("show");clearTimeout(toast.t);toast.t=setTimeout(()=>e.classList.remove("show"),2400)}
 function card(b,action){
- const cv=b.hasImg?`<div class="cover ph"><img src="/api/photo/${b.id}" loading="lazy" alt="Couverture de ${esc(b.title)}"></div>`:`<div class="cover" style="--b:${COLORS[b.c%6][0]};--t:${COLORS[b.c%6][1]}"><i></i><div class="mid"><b>${esc(b.title)}</b></div><i>${esc(b.author)}</i></div>`;
+ const cv=b.hasImg?`<div class="cover ph"><img src="${PV.photo(b.id)}" loading="lazy" alt="Couverture de ${esc(b.title)}"></div>`:`<div class="cover" style="--b:${COLORS[b.c%6][0]};--t:${COLORS[b.c%6][1]}"><i></i><div class="mid"><b>${esc(b.title)}</b></div><i>${esc(b.author)}</i></div>`;
  const tt=b.hasImg?`<span>${esc(b.title)}</span>`:"";
  const loc=(!me||b.owner===me)?"":`<small>${esc(city[b.owner])} · ${distLbl(b.owner)}</small>`;
- return `<article class="book"><a class="cl" href="#/livre/${b.id}" data-open="${b.id}" aria-label="Voir l'annonce : ${esc(b.title)}">${cv}</a><div class="info">${tt}${me?`<span class="owner">${avatars[b.owner]?`<img class="av" src="/api/avatar/${encodeURIComponent(b.owner)}" alt="">`:""}${b.owner===me?"Vous":esc(b.owner)}${rt(b.owner)}</span>`:`<span class="owner">Membre à ${esc(b.gcity||"")}</span>`}<small>${esc(b.cat)} · ${esc(b.cond)} · valeur d'environ ${b.value} DH</small>${loc}${action||""}</div></article>`}
-const photoSrc=(id,n)=>"/api/photo/"+id+(n?"/"+n:"");
-const avatarSrc=n=>"/api/avatar/"+encodeURIComponent(n);
+ return `<article class="book"><a class="cl" href="#/livre/${b.id}" data-open="${b.id}" aria-label="Voir l'annonce : ${esc(b.title)}">${cv}</a><div class="info">${tt}${me?`<span class="owner">${avatars[b.owner]?`<img class="av" src="${PV.avatar(b.owner)}" alt="">`:""}${b.owner===me?"Vous":esc(b.owner)}${rt(b.owner)}</span>`:`<span class="owner">Membre à ${esc(b.gcity||"")}</span>`}<small>${esc(b.cat)} · ${esc(b.cond)} · valeur d'environ ${b.value} DH</small>${loc}${action||""}</div></article>`}
+const photoSrc=(id,n)=>PV.photo(id,n);
+const avatarSrc=n=>PV.avatar(n);
 function routeHash(){const m=/^#\/livre\/(\d+)$/.exec(location.hash);if(m&&view!=="book"){prevView=view;bookId=+m[1];view="book"}}
 function openBook(id){prevView=view==="book"?prevView:view;bookId=id;view="book";try{history.pushState(null,"","#/livre/"+id)}catch(e){}render();window.scrollTo(0,0)}
 async function shareBook(id){const b=get(id),url=location.origin+"/livre/"+id;
@@ -293,7 +342,7 @@ function guestRender(){
  const v=$("#view");
  if(view==="about"){v.innerHTML=nav+ABOUT.replace(/<button[\s\S]*?<\/button>/,"");return}
  if(view==="book"){v.innerHTML=nav+guestBook(bookId);return}
- v.innerHTML=nav+`<p class="guestbar"><strong>Créez un compte gratuit</strong> pour publier vos livres et proposer des échanges. <button class="linkbtn" data-gv="signup">S'inscrire</button></p>
+ v.innerHTML=nav+`<p class="guestbar"><strong>Créez un compte gratuit</strong> pour publier vos livres et proposer des échanges. <em>(Aperçu : compte de démonstration <strong>demo@tabadol.ma</strong> / <strong>demo1234</strong>)</em> <button class="linkbtn" data-gv="signup">S'inscrire</button></p>
  <div class="filters"><input type="search" id="q" placeholder="Rechercher un titre ou un auteur" aria-label="Rechercher un livre"><select id="fc" aria-label="Catégorie"><option value="">Toutes les catégories</option>${CATS.map(c=>`<option>${c}</option>`).join("")}</select><select id="fs" aria-label="État du livre (occasion)"><option value="">Tous les états</option>${CONDS.map(c=>`<option>${c}</option>`).join("")}</select></div><div id="res"></div>`;
  $("#q").value=F.q;$("#fc").value=F.cat;$("#fs").value=F.cond;
  $("#q").oninput=e=>{F.q=e.target.value;drawGuest()};$("#fc").onchange=e=>{F.cat=e.target.value;drawGuest()};$("#fs").onchange=e=>{F.cond=e.target.value;drawGuest()};
@@ -362,10 +411,10 @@ function renderAuth(mode){
  ${su?`<label>Nom d'utilisateur<input name="name" required minlength="2" maxlength="30" autocomplete="username"></label>`:""}
  <label>E-mail<input name="email" type="email" required autocomplete="email"></label>
  <label>Mot de passe${su?" (8 caractères minimum)":""}<input name="password" type="password" required minlength="8" autocomplete="${su?"new-password":"current-password"}"></label>
- ${su?`<label>Ville<select name="city">${Object.keys(CITIES).map(c=>`<option>${c}</option>`).join("")}</select></label>
+ ${su?`<label>Ville<select name="city">${CITY_NAMES.map(c=>`<option>${c}</option>`).join("")}</select></label>
  <label>Téléphone (facultatif)<input name="phone" type="tel" autocomplete="tel"></label>
  <label>Photo de profil ou logo (facultatif)<input name="avatar" type="file" accept="image/*"></label>`:""}
- <p class="err" id="aerr" role="alert"></p>
+ <p class="sub" style="margin:0">Aperçu : compte de démonstration <strong>demo@tabadol.ma</strong> / <strong>demo1234</strong>, ou créez le vôtre. Dans « Demandes », essayez le chat, « Échange effectué » et « Noter ». Les données sont fictives et disparaissent au rechargement.</p><p class="err" id="aerr" role="alert"></p>
  <button class="btn" type="submit">${su?"Créer mon compte":"Se connecter"}</button></form></div>`+ABOUT.replace(/<button[\s\S]*?<\/button>/,"");
  $("#af").onsubmit=e=>{e.preventDefault();const f=new FormData(e.target),body=Object.fromEntries([...f].filter(([k])=>k!=="avatar"));
   const go=async avatar=>{const r=await api(su?"/api/signup":"/api/login","POST",{...body,avatar});if(r.error){$("#aerr").textContent=r.error;return}await boot()};
@@ -376,7 +425,7 @@ function render(){
  if(!me){guestRender();return}
  routeHash();
  $("#mycity").value=city[me];
- $("#who").innerHTML=`${avatars[me]?`<img class="av" src="/api/avatar/${encodeURIComponent(me)}" alt="">`:""}<span>${esc(me)}</span><button data-out>Se déconnecter</button>`;
+ $("#who").innerHTML=`${avatars[me]?`<img class="av" src="${PV.avatar(me)}" alt="">`:""}<span>${esc(me)}</span><button data-out>Se déconnecter</button>`;
  document.querySelectorAll(".tab").forEach(t=>t.setAttribute("aria-selected",t.dataset.v===(view==="book"?prevView:view)));
  const inc=reqs.filter(r=>r.to===me&&r.status==="pending").length+unreadTotal;
  $("#badge").hidden=!inc;$("#badge").textContent=inc;
@@ -489,7 +538,7 @@ $("#send").onclick=async()=>{
  $("#dlg").close();if(r.error){toast(r.error);return}
  toast(`Demande envoyée à ${get(target).owner}`);view="reqs";await boot();
 };
-$("#mycity").innerHTML=Object.keys(CITIES).map(c=>`<option>${c}</option>`).join("");
+$("#mycity").innerHTML=CITY_NAMES.map(c=>`<option>${c}</option>`).join("");
 $("#mycity").onchange=async e=>{await api("/api/me","PATCH",{city:e.target.value});await boot()};
 $("#who").onclick=async e=>{if(e.target.closest("[data-out]")){await api("/api/logout","POST");me=null;await boot()}};
 window.addEventListener("popstate",()=>{if(view==="book"&&!/^#\/livre\//.test(location.hash))view=prevView;render()});
