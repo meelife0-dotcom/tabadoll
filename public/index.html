@@ -70,6 +70,13 @@ dialog::backdrop{background:rgba(24,30,24,.55)}
 .sub{color:var(--muted);font-size:.88rem;margin:0 0 18px}
 .cityl{display:flex;align-items:center;gap:8px;margin:0 0 20px;font-weight:700}
 .cityl select{width:auto}
+.cp{position:relative;display:block;font-weight:400}
+.cityl .cp{width:200px}
+.cp ul{position:absolute;z-index:30;left:0;right:0;top:100%;max-height:230px;overflow:auto;margin:4px 0 0;padding:4px;list-style:none;background:var(--card);border:1.5px solid var(--line);border-radius:6px;box-shadow:0 12px 28px -8px rgba(0,0,0,.35)}
+.cp li{padding:9px 10px;border-radius:4px;cursor:pointer}
+.cp li.on{background:var(--line)}
+.cp li[aria-selected="true"]{font-weight:700}
+.cp li.none{cursor:default;color:var(--muted)}
 .cover.ph{display:block}
 .cover.ph img{width:100%;height:100%;object-fit:cover;display:block}
 .flag.alt{background:var(--line);color:var(--ink)}
@@ -168,6 +175,39 @@ dialog::backdrop{background:rgba(24,30,24,.55)}
 const COLORS=[["#0f5c4d","#fff"],["#7a1f2b","#fff"],["#c8962e","#1f2a24"],["#5b6b2e","#fff"],["#5e2a5a","#fff"],["#1b5e6b","#fff"]];
 let me=null,myWishes=[],avatars={},authMode="login",rat={},swp={},unreadTotal=0,chatId=null,chatLast=0,chatTimer=null,rateId=null,rateStars=0,delAsk=null,bookId=null,prevView="browse";
 const CITIES={"Casablanca":[33.57,-7.59],"Rabat":[34.02,-6.84],"Kénitra":[34.26,-6.58],"Marrakech":[31.63,-8.01],"Fès":[34.03,-5.0],"Meknès":[33.89,-5.55],"Tanger":[35.76,-5.8],"Tétouan":[35.57,-5.37],"Agadir":[30.43,-9.6],"El Jadida":[33.23,-8.5],"Oujda":[34.68,-1.91],"Al Hoceïma":[35.25,-3.94],"Asilah":[35.47,-6.03],"Azrou":[33.43,-5.22],"Azilal":[31.96,-6.57],"Benslimane":[33.62,-7.12],"Béni Mellal":[32.34,-6.35],"Berkane":[34.92,-2.32],"Berrechid":[33.27,-7.59],"Chefchaouen":[35.17,-5.27],"Dakhla":[23.68,-15.96],"Errachidia":[31.93,-4.43],"Essaouira":[31.51,-9.77],"Fnideq":[35.85,-5.36],"Guelmim":[28.99,-10.06],"Guercif":[34.23,-3.35],"Ifrane":[33.53,-5.11],"Inezgane":[30.35,-9.54],"Khémisset":[33.82,-6.07],"Khouribga":[32.88,-6.91],"Ksar El Kébir":[35.0,-5.9],"Laâyoune":[27.15,-13.2],"Larache":[35.19,-6.15],"Martil":[35.62,-5.27],"Midelt":[32.68,-4.74],"Mohammedia":[33.69,-7.38],"Nador":[35.17,-2.93],"Ouarzazate":[30.92,-6.89],"Oued Zem":[32.86,-6.57],"Safi":[32.3,-9.24],"Salé":[34.04,-6.82],"Settat":[33.0,-7.62],"Sidi Kacem":[34.22,-5.71],"Sidi Slimane":[34.26,-5.93],"Skhirat":[33.85,-7.03],"Smara":[26.74,-11.67],"Tan-Tan":[28.44,-11.1],"Taroudant":[30.47,-8.88],"Taza":[34.21,-4.01],"Témara":[33.93,-6.91],"Tinghir":[31.51,-5.53],"Tiznit":[29.7,-9.73],"Zagora":[30.33,-5.84]};
+/* Searchable city picker: keeps the original <select> (hidden) as the source of truth,
+   so FormData, .value and "change" handlers elsewhere keep working unchanged. */
+const normC=s=>s.normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase().replace(/[^a-z0-9]+/g," ").trim();
+function cityPicker(sel){
+ if(!sel||sel._cp)return;sel._cp=1;
+ const names=[...sel.options].map(o=>o.value),id="cp"+Math.random().toString(36).slice(2,8);
+ const desc=Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype,"value");
+ const wrap=document.createElement("div");wrap.className="cp";
+ wrap.innerHTML=`<input type="text" role="combobox" aria-label="Ville" aria-expanded="false" aria-controls="${id}" aria-autocomplete="list" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Rechercher une ville…"><ul id="${id}" role="listbox" hidden></ul>`;
+ const inp=wrap.firstChild,ul=wrap.lastChild;let shown=[],act=-1,typing=false;
+ const sync=()=>{inp.value=desc.get.call(sel)};
+ Object.defineProperty(sel,"value",{configurable:true,get(){return desc.get.call(sel)},set(v){desc.set.call(sel,v);sync()}});
+ const close=()=>{ul.hidden=true;inp.setAttribute("aria-expanded","false");inp.removeAttribute("aria-activedescendant");act=-1;typing=false};
+ const mark=()=>{[...ul.children].forEach((li,i)=>li.classList.toggle("on",i===act));const li=ul.children[act];if(li){inp.setAttribute("aria-activedescendant",li.id);li.scrollIntoView({block:"nearest"})}};
+ const draw=()=>{
+  const q=typing?normC(inp.value):"",cur=desc.get.call(sel);
+  shown=names.filter(n=>!q||normC(n).includes(q));
+  if(q)shown.sort((a,b)=>(normC(b).startsWith(q)?1:0)-(normC(a).startsWith(q)?1:0));
+  ul.innerHTML=shown.length?shown.map((c,i)=>`<li role="option" id="${id}-${i}" data-i="${i}" aria-selected="${c===cur}">${esc(c)}</li>`).join(""):`<li class="none" role="presentation">Aucune ville trouvée</li>`;
+  act=shown.length?(q?0:Math.max(0,shown.indexOf(cur))):-1;
+  ul.hidden=false;inp.setAttribute("aria-expanded","true");mark()};
+ const choose=c=>{if(c==null)return;const changed=c!==desc.get.call(sel);desc.set.call(sel,c);sync();close();if(changed)sel.dispatchEvent(new Event("change",{bubbles:true}))};
+ inp.addEventListener("focus",()=>{typing=false;inp.select();draw()});
+ inp.addEventListener("click",()=>{if(ul.hidden){typing=false;draw()}});
+ inp.addEventListener("input",()=>{typing=true;draw()});
+ inp.addEventListener("keydown",e=>{
+  if(e.key==="ArrowDown"||e.key==="ArrowUp"){e.preventDefault();if(ul.hidden){typing=false;draw();return}if(shown.length){act=(act+(e.key==="ArrowDown"?1:-1)+shown.length)%shown.length;mark()}}
+  else if(e.key==="Enter"){if(!ul.hidden){e.preventDefault();choose(shown[act])}}
+  else if(e.key==="Escape"){if(!ul.hidden){e.preventDefault();sync();close()}}});
+ inp.addEventListener("blur",()=>{sync();close()});
+ ul.addEventListener("mousedown",e=>e.preventDefault());
+ ul.addEventListener("click",e=>{const li=e.target.closest("li[data-i]");if(li)choose(shown[+li.dataset.i])});
+ sel.before(wrap);sel.style.display="none";sel.tabIndex=-1;sel.setAttribute("aria-hidden","true");sync()}
 let city={};
 const CATS=["Roman","Science-fiction","Fantasy","Histoire","Biographie","Développement personnel","Jeunesse","Études"];
 const CONDS=["Comme neuf","Bon état","Usé"];
@@ -367,6 +407,7 @@ function renderAuth(mode){
  <label>Photo de profil ou logo (facultatif)<input name="avatar" type="file" accept="image/*"></label>`:""}
  <p class="err" id="aerr" role="alert"></p>
  <button class="btn" type="submit">${su?"Créer mon compte":"Se connecter"}</button></form></div>`+ABOUT.replace(/<button[\s\S]*?<\/button>/,"");
+ if(su)cityPicker($("#af [name=city]"));
  $("#af").onsubmit=e=>{e.preventDefault();const f=new FormData(e.target),body=Object.fromEntries([...f].filter(([k])=>k!=="avatar"));
   const go=async avatar=>{const r=await api(su?"/api/signup":"/api/login","POST",{...body,avatar});if(r.error){$("#aerr").textContent=r.error;return}await boot()};
   const file=f.get("avatar");file&&file.size?shrink(file,go,200):go("")};
@@ -490,6 +531,7 @@ $("#send").onclick=async()=>{
  toast(`Demande envoyée à ${get(target).owner}`);view="reqs";await boot();
 };
 $("#mycity").innerHTML=Object.keys(CITIES).map(c=>`<option>${c}</option>`).join("");
+cityPicker($("#mycity"));
 $("#mycity").onchange=async e=>{await api("/api/me","PATCH",{city:e.target.value});await boot()};
 $("#who").onclick=async e=>{if(e.target.closest("[data-out]")){await api("/api/logout","POST");me=null;await boot()}};
 window.addEventListener("popstate",()=>{if(view==="book"&&!/^#\/livre\//.test(location.hash))view=prevView;render()});
