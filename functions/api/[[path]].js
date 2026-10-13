@@ -1,5 +1,5 @@
 // Tabadol back end: Cloudflare Pages Functions + D1 (SQLite). All routes live under /api/.
-const CITIES=["Casablanca","Rabat","Kénitra","Marrakech","Fès","Meknès","Tanger","Tétouan","Agadir","El Jadida","Oujda","Al Hoceïma","Asilah","Azrou","Azilal","Benslimane","Béni Mellal","Berkane","Berrechid","Chefchaouen","Dakhla","Errachidia","Essaouira","Fnideq","Guelmim","Guercif","Ifrane","Inezgane","Khémisset","Khouribga","Ksar El Kébir","Laâyoune","Larache","Martil","Midelt","Mohammedia","Nador","Ouarzazate","Oued Zem","Safi","Salé","Settat","Sidi Kacem","Sidi Slimane","Skhirat","Smara","Tan-Tan","Taroudant","Taza","Témara","Tinghir","Tiznit","Zagora"];
+const CITIES=["Casablanca","Rabat","Salé","Témara","Skhirat","Kénitra","Mohammedia","Marrakech","Fès","Meknès","Tanger","Tétouan","Martil","M'diq","Fnideq","Chefchaouen","Ouezzane","Larache","Asilah","Ksar El Kébir","Agadir","Inezgane","Aït Melloul","Taroudant","Tiznit","El Jadida","Berrechid","Settat","Khouribga","Oued Zem","Béni Mellal","Fquih Ben Salah","Azilal","Khénifra","Midelt","Errachidia","Tinghir","Ouarzazate","Zagora","Safi","Youssoufia","El Kelaâ des Sraghna","Essaouira","Khémisset","Sidi Kacem","Sidi Slimane","Souk El Arbaa","Ifrane","Azrou","Sefrou","Taza","Guercif","Al Hoceïma","Nador","Berkane","Taourirt","Oujda","Guelmim","Tan-Tan","Laâyoune","Dakhla"];
 const CATS=["Roman","Science-fiction","Fantasy","Histoire","Biographie","Développement personnel","Jeunesse","Études"];
 const CONDS=["Comme neuf","Bon état","Usé"];
 const J=(d,s=200,h={})=>new Response(JSON.stringify(d),{status:s,headers:{"content-type":"application/json",...h}});
@@ -38,6 +38,11 @@ export async function onRequest({request,env,params}){
   if(m==="GET"&&a==="public"){
    const rows=(await q("SELECT b.id,b.title,b.author,b.cat,b.cond,b.value,b.description,b.img IS NOT NULL AS hasImg,(SELECT COUNT(*) FROM book_photos p WHERE p.book_id=b.id) AS extra,u.city FROM books b JOIN users u ON u.id=b.owner_id ORDER BY b.id DESC LIMIT 300").all()).results;
    return J({books:rows},200,{"cache-control":"public, max-age=60"});
+  }
+  // public "Je cherche" board for visitors: city only, never the member's name
+  if(m==="GET"&&a==="wants"){
+   const rows=(await q("SELECT w.id,w.title,w.note,w.created,u.city,(SELECT COUNT(*) FROM want_replies r WHERE r.want_id=w.id) AS replyCount FROM wants w JOIN users u ON u.id=w.user_id WHERE w.status='open' ORDER BY w.id DESC LIMIT 100").all()).results;
+   return J({wants:rows},200,{"cache-control":"public, max-age=60"});
   }
   // public listing data (used by shared links): never includes the owner's name
   if(m==="GET"&&a==="book"){
@@ -80,14 +85,16 @@ export async function onRequest({request,env,params}){
     // a rating counts once both people rated, or 7 days after the swap (stops revenge ratings)
     q("SELECT u.name,ROUND(AVG(r.stars),1) AS avg,COUNT(*) AS n FROM ratings r JOIN users u ON u.id=r.ratee_id JOIN requests s ON s.id=r.request_id WHERE EXISTS(SELECT 1 FROM ratings r2 WHERE r2.request_id=r.request_id AND r2.rater_id=r.ratee_id) OR s.done_at<?1 GROUP BY u.id",now-7*864e5),
     q("SELECT u.name,COUNT(*) AS n FROM requests s JOIN users u ON u.id IN (s.from_id,s.to_id) WHERE s.status='done' GROUP BY u.id"),
-    q("SELECT u.name AS user,w.title FROM wishes w JOIN users u ON u.id=w.user_id")]);
+    q("SELECT u.name AS user,w.title FROM wishes w JOIN users u ON u.id=w.user_id"),
+    q("SELECT w.id,w.title,w.note,w.status,w.created,u.name AS owner,u.city,(SELECT COUNT(*) FROM want_replies r WHERE r.want_id=w.id) AS replyCount,EXISTS(SELECT 1 FROM want_replies r WHERE r.want_id=w.id AND r.user_id=?1) AS iReplied FROM wants w JOIN users u ON u.id=w.user_id WHERE w.status='open' OR w.user_id=?1 ORDER BY w.id DESC LIMIT 200",me.id),
+    q("SELECT r.id,r.want_id AS want,r.book_id AS book,r.seen,u.name AS user FROM want_replies r JOIN wants w ON w.id=r.want_id JOIN users u ON u.id=r.user_id WHERE w.user_id=?1",me.id)]);
    // Mutual matches are computed here: members only receive THEIR matches, never other members' wishlists.
    const bks=r[1].results,allW=r[6].results,myW=allW.filter(x=>x.user===me.name),wishOf={},res=[];
    allW.forEach(x=>(wishOf[x.user]=wishOf[x.user]||[]).push(x.title));
    for(const u of new Set(bks.map(b=>b.owner))){if(u===me.name)continue;
     const theirs=bks.filter(b=>b.owner===u&&myW.some(x=>fz(x.title,b))),mine=bks.filter(b=>b.owner===me.name&&(wishOf[u]||[]).some(t=>fz(t,b)));
     theirs.forEach(t=>mine.forEach(m=>res.push({user:u,theirs:t.id,mine:m.id})))}
-   return J({me:{name:me.name,city:me.city},matches:res,users:r[0].results,books:r[1].results,wishes:r[2].results,requests:r[3].results,ratings:r[4].results,swaps:r[5].results});
+   return J({me:{name:me.name,city:me.city},matches:res,users:r[0].results,books:r[1].results,wishes:r[2].results,requests:r[3].results,ratings:r[4].results,swaps:r[5].results,wants:r[7].results,replies:r[8].results});
   }
 
   // ---- members only
@@ -108,7 +115,7 @@ export async function onRequest({request,env,params}){
    const id=+b;
    if(!(await q("SELECT 1 FROM books WHERE id=?1 AND owner_id=?2",id,me.id).first()))return E("Livre introuvable.",404);
    if(await q("SELECT 1 FROM requests WHERE status='accepted' AND (want_id=?1 OR offer_id=?1)",id).first())return E("Ce livre est réservé par un échange en cours.",409);
-   await env.DB.batch([q("DELETE FROM requests WHERE status='pending' AND (want_id=?1 OR offer_id=?1)",id),q("DELETE FROM book_photos WHERE book_id=?1",id),q("DELETE FROM books WHERE id=?1",id)]);
+   await env.DB.batch([q("DELETE FROM requests WHERE status='pending' AND (want_id=?1 OR offer_id=?1)",id),q("DELETE FROM book_photos WHERE book_id=?1",id),q("DELETE FROM want_replies WHERE book_id=?1",id),q("DELETE FROM books WHERE id=?1",id)]);
    return J({ok:true});
   }
   if(m==="POST"&&a==="wishes"){
@@ -131,7 +138,7 @@ export async function onRequest({request,env,params}){
   const myReq=async id=>(await q("SELECT * FROM requests WHERE id=?1 AND (from_id=?2 OR to_id=?2)",+id,me.id).first())||null;
   const chatOpen=r=>r.status==="accepted"||(r.status==="done"&&now-r.done_at<7*864e5);
   if(m==="GET"&&a==="unread"){
-   return J(await q("SELECT (SELECT COUNT(*) FROM requests WHERE to_id=?1 AND status='pending') AS pending,(SELECT COUNT(*) FROM messages m JOIN requests r ON r.id=m.request_id WHERE (r.from_id=?1 OR r.to_id=?1) AND m.sender_id!=?1 AND m.id>COALESCE((SELECT last_id FROM chat_reads c WHERE c.request_id=r.id AND c.user_id=?1),0)) AS unread",me.id).first());
+   return J(await q("SELECT (SELECT COUNT(*) FROM requests WHERE to_id=?1 AND status='pending') AS pending,(SELECT COUNT(*) FROM messages m JOIN requests r ON r.id=m.request_id WHERE (r.from_id=?1 OR r.to_id=?1) AND m.sender_id!=?1 AND m.id>COALESCE((SELECT last_id FROM chat_reads c WHERE c.request_id=r.id AND c.user_id=?1),0)) AS unread,(SELECT COUNT(*) FROM want_replies r JOIN wants w ON w.id=r.want_id WHERE w.user_id=?1 AND w.status='open' AND r.seen=0) AS replies",me.id).first());
   }
   // ---- mini chat (one conversation per accepted swap)
   if(m==="GET"&&a==="requests"&&b&&c==="messages"){
@@ -162,6 +169,42 @@ export async function onRequest({request,env,params}){
    if(!u||!why||u.id===me.id)return E("Signalement invalide.");
    await q("INSERT INTO reports(reporter_id,user_id,request_id,reason,created) VALUES(?1,?2,?3,?4,?5)",me.id,u.id,+body.request||null,why,now).run();
    return J({ok:true});
+  }
+  // ---- "Je cherche" board: members post the book they want; others answer with a book from their shelf
+  const badText=s=>/(\d[\s.\-]*){8,}|@|https?:|www\./i.test(s);
+  if(m==="POST"&&a==="wants"&&!b){
+   const t=str(body.title,2,100),nt=str(body.note||"",0,200);
+   if(!t||nt===null)return E("Titre invalide.");
+   if(badText(t)||badText(nt))return E("N'écrivez pas de numéro de téléphone, d'e-mail ou de lien.");
+   if((await q("SELECT COUNT(*) AS n FROM wants WHERE user_id=?1 AND status='open'",me.id).first()).n>=5)return E("Maximum 5 recherches ouvertes.");
+   if((await q("SELECT COUNT(*) AS n FROM wants WHERE user_id=?1 AND created>?2",me.id,now-864e5).first()).n>=10)return E("Trop de recherches aujourd'hui.");
+   const open=(await q("SELECT title FROM wants WHERE user_id=?1 AND status='open'",me.id).all()).results;
+   if(open.some(x=>clean(x.title)===clean(t)))return E("Vous avez déjà publié cette recherche.");
+   await q("INSERT INTO wants(user_id,title,note,created) VALUES(?1,?2,?3,?4)",me.id,t,nt,now).run();
+   return J({ok:true});
+  }
+  if(m==="POST"&&a==="wants"&&b==="seen"){
+   await q("UPDATE want_replies SET seen=1 WHERE want_id IN (SELECT id FROM wants WHERE user_id=?1)",me.id).run();return J({ok:true});
+  }
+  if(a==="wants"&&b&&b!=="seen"){
+   const w=await q("SELECT * FROM wants WHERE id=?1",+b).first();if(!w)return E("Recherche introuvable.",404);
+   if(m==="DELETE"){
+    if(w.user_id!==me.id)return E("Recherche introuvable.",404);
+    await env.DB.batch([q("DELETE FROM want_replies WHERE want_id=?1",w.id),q("DELETE FROM wants WHERE id=?1",w.id)]);return J({ok:true});
+   }
+   if(m==="POST"&&c==="found"){
+    if(w.user_id!==me.id)return E("Recherche introuvable.",404);
+    await q("UPDATE wants SET status='found' WHERE id=?1",w.id).run();return J({ok:true});
+   }
+   if(m==="POST"&&c==="reply"){
+    if(w.status!=="open")return E("Cette recherche est fermée.",409);
+    if(w.user_id===me.id)return E("Vous ne pouvez pas répondre à votre propre recherche.");
+    const bk=await q("SELECT id FROM books WHERE id=?1 AND owner_id=?2",+body.book,me.id).first();if(!bk)return E("Ce livre n'est pas sur votre étagère.");
+    if((await q("SELECT COUNT(*) AS n FROM want_replies WHERE want_id=?1",w.id).first()).n>=30)return E("Trop de réponses pour cette recherche.",409);
+    try{await q("INSERT INTO want_replies(want_id,user_id,book_id,created) VALUES(?1,?2,?3,?4)",w.id,me.id,bk.id,now).run()}
+    catch(e){return E("Vous avez déjà répondu avec ce livre.",409)}
+    return J({ok:true});
+   }
   }
   // ---- swap lifecycle: pending > accepted (chat opens) > done (both confirmed after meeting)
   if(m==="POST"&&a==="requests"&&b&&["accept","decline","cancel","confirm"].includes(c)){
